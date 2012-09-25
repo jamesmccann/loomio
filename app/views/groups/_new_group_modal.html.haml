@@ -1,0 +1,7 @@
+#new-group.modal.hidden
+  .modal-header
+    %button.close{"data-dismiss" => "modal"}×
+    - position = :vote_position
+    %h3#position-title
+  = render 'form', group: @group, parent: @parent,
+  submit_text: "Create group", :data => { :disable_with => "Creating group" }
