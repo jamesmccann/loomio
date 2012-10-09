@@ -14,21 +14,3 @@ $ ->
     $(".edit-discussion-description").click (e)->
       $(".discussion-description-helper-text").toggle()
 
-$ ->
-  $("textarea").atWho "@", (query, callback) ->
-    console.log("@who") 
-    $.get "/users/mentions.json", q: query, ((result) ->
-        console.log("in callback")
-        console.log("result: ")
-        console.log(result)
-        #names = $.parseJSON(result)
-        names = Array::slice.call(result)
-        names = $.map(result, (value, key) -> 
-          id: key
-          name: value
-          email: value + "@email.com"
-        )
-        console.log(names)
-        callback names
-    ), "json"
-
