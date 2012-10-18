@@ -204,12 +204,16 @@ pre{
     margin-right: 10px;
   }
 
-  #new-comment {
+  #new-comment-input {
     margin: 0 0 5px 0px;
     height: 80px;
-    color: $dark-grey;
     width: 380px;
   }
+
+  #new-comment {
+    color: $dark-grey;
+  }
+
 
   #post-new-comment {
     margin: 5px 5px 5px 45px;

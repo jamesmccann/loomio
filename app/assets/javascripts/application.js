@@ -11,7 +11,6 @@
 //= require lib/jqplot.pieRenderer.min
 //= require lib/jquery.tokeninput
 //= require lib/jquery.mousewheel
-//= require lib/jquery.mentionsInput
 //= require underscore
 //= require backbone
 //= require backbone_rails_sync
@@ -20,6 +19,8 @@
 //= require modernizr
 //= require bootstrap
 //= require bootstrap-custom
+//= require lib/jquery.elastic
+//= require lib/jquery.mentionsInput
 //= require main
 //= require groups
 //= require discussions
