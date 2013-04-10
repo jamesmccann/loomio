@@ -3,6 +3,10 @@ Loomio::Application.routes.draw do
 
   devise_for :users, controllers: { sessions: 'users/sessions', invitations: 'users/invitations' }
 
+  resources :visualisations, :only => [:index] do 
+    get :branches, :on => :collection
+  end
+
   resources :group_requests, only: [:create, :new] do
     get :start_new_group, on: :member
   end
