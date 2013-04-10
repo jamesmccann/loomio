@@ -19,28 +19,16 @@ class Visualisation
   end
 
   def branch_diff_size(branch)
-    raw_diff = `git diff master..#{branch}`
-    diff = raw_diff.split(/\n/)
+    raw_diff_stats = `git diff --numstat master..#{branch}`
+    diff_stats = raw_diff_stats.split(/\n/)
     additions = deletions = 0
-    diff.each do |line|
-      additions += 1 if line.start_with?("+") && !line.start_with?("+++")
-      deletions += 1 if line.start_with?("-") && !line.start_with?("---")
+    diff_stats.each do |line|
+      cols = line.split
+      additions += cols[0].to_i 
+      deletions += cols[1].to_i 
     end
 
-    require 'ruby-debug'    
-    debugger
-
-    raw_diff = `git diff master..#{branch} -- Gemfile.lock`
-    diff = raw_diff.split(/\n/)
-    additions = deletions = 0
-    diff.each do |line|
-      additions += 1 if line.start_with?("+") && !line.start_with?("+++")
-      deletions += 1 if line.start_with?("-") && !line.start_with?("---")
-    end
-
-    debugger
-
-    diff
+    return additions, deletions
   end
 
 end
