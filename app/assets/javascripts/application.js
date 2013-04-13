@@ -34,4 +34,3 @@
 //= require votes
 //= require jquery.atwho
 //= require pop-over
-//= require d3

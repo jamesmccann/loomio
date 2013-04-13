@@ -3,21 +3,19 @@ class Visualisation
 
   attr_accessor :repo
 
-  vis = Visualisation.new
-
   #initialize a repo object
   def initialize
     @repo = Grit::Repo.new("#{Rails.root}")
-  end
-
-  def number_of_branches
-    @repo.heads.size
   end
 
   def branches
     @repo.heads
   end
 
+  def number_of_branches
+    @repo.heads.size
+  end
+  
   def branch_diff_size(branch)
     raw_diff_stats = `git diff --numstat master..#{branch}`
     diff_stats = raw_diff_stats.split(/\n/)

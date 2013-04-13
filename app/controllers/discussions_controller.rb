@@ -9,9 +9,6 @@ class DiscussionsController < GroupBaseController
   end
 
   def new
-    require 'visualisation'
-    Visualisation.hi
-
     @discussion = Discussion.new
     if params[:group_id]
       @discussion.group_id = params[:group_id]

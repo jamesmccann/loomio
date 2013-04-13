@@ -4,7 +4,7 @@ Loomio::Application.routes.draw do
   devise_for :users, controllers: { sessions: 'users/sessions', invitations: 'users/invitations' }
 
   resources :visualisations, :only => [:index] do 
-    get :branches, :on => :collection
+    get :branches, :on => :collection, :format => :json, :via => :get
   end
 
   resources :group_requests, only: [:create, :new] do
