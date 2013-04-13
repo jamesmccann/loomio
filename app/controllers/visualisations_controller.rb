@@ -23,4 +23,26 @@ class VisualisationsController < ApplicationController
     end
   end
 
+  #GET /contained_branches.json
+  def containing_branches
+    @visualisation = Visualisation.new
+    branches = @visualisation.branches
+    contained_branches = {}
+    for i in 0..branches.size - 1
+      target_branch = branches[i]
+      head_sha = target_branch.commit.sha
+      for j in 0..branches.size - 1
+        next if j == i
+        containing_branch = branches[j]
+        if @visualisation.branch_contains_commit(containing_branch, head_sha)
+          contained_branches.merge!(containing_branch.name.to_sym => target_branch.name)
+        end
+      end
+    end
+
+    respond_to do |format|
+      format.json { render :json => contained_branches.to_json }
+    end
+  end
+
 end

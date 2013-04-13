@@ -15,6 +15,27 @@ class Visualisation
   def number_of_branches
     @repo.heads.size
   end
+
+  # this does not work...
+  def parent_branch_of(branch_name)
+    commit_sha1s = `git log #{branch_name} --pretty=format:"%H"`.split("\n")
+    commit_sha1s.each do |commit|
+      branches = `git branch --contains #{commit}`.split("\n")
+      branches.each do |b|
+        b.gsub!(/[*]?\s/, '')
+        return b if branch_name != b
+      end
+    end
+    return false 
+  end
+
+  def branch_contains_commit(branch, commit)
+    `git branch --contains #{commit}`.split("\n").each { |b| b.strip! }.include?(branch)
+  end
+
+  def branch_diff_number_commits(branch)
+    `git cherry master #{branch}`.split("\n").size
+  end  
   
   def branch_diff_size(branch)
     raw_diff_stats = `git diff --numstat master..#{branch}`

@@ -5,6 +5,7 @@ Loomio::Application.routes.draw do
 
   resources :visualisations, :only => [:index] do 
     get :branches, :on => :collection, :format => :json, :via => :get
+    get :containing_branches, :on => :collection, :format => :json, :via => :get
   end
 
   resources :group_requests, only: [:create, :new] do

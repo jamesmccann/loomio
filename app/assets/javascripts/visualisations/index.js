@@ -18,6 +18,10 @@ $.get('/visualisations/branches.json', function(data) {
   initGraph(data);
 });
 
+$.get('/visualisations/containing_branches.json', function(data) {
+  console.log(data);
+});
+
 var branches;
 function initGraph(data) {
   branches = data.branches;
@@ -159,7 +163,7 @@ function initGraph(data) {
 
     // update existing nodes (reflexive & selected visual states)
     circle.selectAll('circle')
-      .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
+      .style('fill', function(d) { return (d === selected_node) ? d3.rgb(branch_color(d)).brighter().toString() : d3.rgb(branch_color(d)); })
       .classed('reflexive', function(d) { return d.reflexive; });
 
     // add new nodes
@@ -168,8 +172,8 @@ function initGraph(data) {
     g.append('svg:circle')
       .attr('class', 'node')
       .attr('r', function(d) { return 30*d.size })
-      .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
-      .style('stroke', function(d) { return d3.rgb(colors(d.id)).darker().toString(); })
+      .style('fill', function(d) { return (d === selected_node) ? d3.rgb(branch_color(d)).toString() : d3.rgb(branch_color(d)); })
+      .style('stroke', function(d) { return d3.rgb(branch_color(d)).darker().toString(); })
       .classed('reflexive', function(d) { return d.reflexive; })
       .on('mouseover', function(d) {
         if(!mousedown_node || d === mousedown_node) return;
@@ -259,6 +263,19 @@ function initGraph(data) {
     force.start();
   }
 
+  function branch_color(node) {
+    if (node.branch.name == "master") { return "#1f77b4"; }
+    //color based on additions and deletions
+    var branch_diff = node.branch.diff.add - node.branch.diff.del;
+    if (branch_diff > 0) { 
+      return "#6ACD72"; 
+    } else if (branch_diff < 0) {
+      return "#C3554B";
+    } else { 
+      return "#9CDECD"; 
+    }
+  }
+
   function mousedown() {
     // prevent I-bar on drag
     //d3.event.preventDefault();
@@ -336,24 +353,11 @@ function initGraph(data) {
       }
   }
 
-  function keyup() {
-    lastKeyDown = -1;
-
-    // ctrl
-    if(d3.event.keyCode === 17) {
-      circle
-        .on('mousedown.drag', null)
-        .on('touchstart.drag', null);
-      svg.classed('ctrl', false);
-    }
-  }
-
   // app starts here
   svg.on('mousedown', mousedown)
     .on('mousemove', mousemove)
     .on('mouseup', mouseup);
   //   .on('keydown', keydown)
-  //   .on('keyup', keyup);
 
   restart();
 }
