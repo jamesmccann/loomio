@@ -16,7 +16,7 @@ class VisualisationsController < ApplicationController
       total_additions += diff.first
       total_deletions += diff.last
       branches << {:name => branch.name, :diff => {:add => diff.first, :del => diff.last}, 
-                    :merged => merged_with_master}
+                    :merged_with_master => merged_with_master}
     end
 
     result = {:branches => branches, :diff => {:add => total_additions, :del => total_deletions}}
