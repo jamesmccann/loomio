@@ -28,16 +28,14 @@ class VisualisationsController < ApplicationController
     @visualisation = Visualisation.new
     branches = @visualisation.branches
     contained_branches = {}
-    for i in 0..branches.size - 1
-      target_branch = branches[i]
+    branches.each do |target_branch|
       head_sha = target_branch.commit.sha
-      for j in 0..branches.size - 1
-        next if j == i
-        containing_branch = branches[j]
-        if @visualisation.branch_contains_commit(containing_branch, head_sha)
-          contained_branches.merge!(containing_branch.name.to_sym => target_branch.name)
-        end
+      branch_names_with_commit = @visualisation.branches_containing_commit(head_sha)
+      found_branches = []
+      branch_names_with_commit.each do |branch_name|
+        found_branches.push(branch_name) unless branch_name == target_branch.name
       end
+      contained_branches.merge!(target_branch.name.to_sym => found_branches) unless found_branches.empty?
     end
 
     respond_to do |format|

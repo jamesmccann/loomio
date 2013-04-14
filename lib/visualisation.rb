@@ -29,8 +29,8 @@ class Visualisation
     return false 
   end
 
-  def branch_contains_commit(branch, commit)
-    `git branch --contains #{commit}`.split("\n").each { |b| b.strip! }.include?(branch)
+  def branches_containing_commit(commit_sha)
+    `git branch --contains #{commit_sha}`.split("\n").each { |b| b.gsub!(/[*]?\s/, '') }
   end
 
   def branch_diff_number_commits(branch)

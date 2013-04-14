@@ -14,19 +14,21 @@ var svg = body.select("#vis-display")
 //  - reflexive edges are indicated on the node (as a bold black circle).
 //  - links are always source < target; edge directions are set by 'left' and 'right'.
 
+var branch_data, merge_data;
 $.get('/visualisations/branches.json', function(data) {
-  initGraph(data);
+  branch_data = data;
+  $.get('/visualisations/containing_branches.json', function(merge_data) {
+    initGraph(branch_data, merge_data);
+  });
 });
 
-$.get('/visualisations/containing_branches.json', function(data) {
-  console.log(data);
-});
 
 var branches;
-function initGraph(data) {
-  branches = data.branches;
-  diff_lines = data.diff;
+function initGraph(branch_data, merge_data) {
+  branches = branch_data.branches;
+  diff_lines = branch_data.diff;
   console.log(branches);
+  console.log(merge_data);
 
   var master; 
   //remove the master branch from branches array 
@@ -38,17 +40,25 @@ function initGraph(data) {
   var total_diff, percent_diff = 0.0;
   total_diff = diff_lines.add + diff_lines.del;
 
-  var nodes = [];
+  var nodes = [], links = [], branch_names = {};
   nodes.push({id: 0, branch: master, size: 1.0, reflexive: false})
+  branch_names["master"] = 0;
   $.each(branches, function(i, obj){
     //calculate the percentage diff for this branch
     percent_diff = (obj.diff.add + obj.diff.del) / total_diff;
     nodes.push({id: i+1, branch: obj, size: percent_diff, reflexive: false})
-  })
+    branch_names[obj.name] = i+1;
+  });
 
-  var lastNodeId = nodes.length-1,
-    links = [];
+  //check for merges/edges for each branch/node
+  $.each(merge_data, function(key, val){
+    $.each(val, function(i, el) {
+      links.push({source: branch_names[key], target: branch_names[el], left: false, right: true});
+    });
+  });
 
+  var lastNodeId = nodes.length-1;
+  
   // init D3 force layout
   var force = d3.layout.force()
       .nodes(nodes)
