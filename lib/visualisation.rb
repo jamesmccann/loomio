@@ -9,7 +9,7 @@ class Visualisation
   end
 
   def branches
-    @repo.heads
+    @repo.refs
   end
 
   def number_of_branches
@@ -27,6 +27,10 @@ class Visualisation
       end
     end
     return false 
+  end
+
+  def branch_contains_commit(branch, commit_sha)
+    `git branch --contains #{commit_sha}`.split("\n").each {|b| b.gsub!(/[*]?\s/, '')}.include?(branch)
   end
 
   def branches_containing_commit(commit_sha)

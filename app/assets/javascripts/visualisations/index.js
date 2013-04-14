@@ -22,7 +22,6 @@ $.get('/visualisations/branches.json', function(data) {
   });
 });
 
-
 var branches;
 function initGraph(branch_data, merge_data) {
   branches = branch_data.branches;

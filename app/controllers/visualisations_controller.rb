@@ -12,9 +12,11 @@ class VisualisationsController < ApplicationController
     total_additions = total_deletions = 0
     @visualisation.branches.each do |branch|
       diff = @visualisation.branch_diff_size(branch.name)
+      merged_with_master = @visualisation.branch_contains_commit("master", branch.commit.sha)
       total_additions += diff.first
       total_deletions += diff.last
-      branches << {:name => branch.name, :diff => {:add => diff.first, :del => diff.last}}
+      branches << {:name => branch.name, :diff => {:add => diff.first, :del => diff.last}, 
+                    :merged => merged_with_master}
     end
 
     result = {:branches => branches, :diff => {:add => total_additions, :del => total_deletions}}
