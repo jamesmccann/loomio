@@ -338,13 +338,13 @@ class BranchGraph
     @nodes = $.grep @nodes, (node, i) =>
       if node.branch.merged_with_master is true
         return true if node.branch.name == "master"
-        @links = $.grep @links, (link, i) =>
+        @links = $.grep @links, (link, i) ->
           return false if link.source == node or link.target == node
           true
-        @branches = $.grep @branches, (branch, i) =>
+        @branches = $.grep @branches, (branch, i) ->
           return false if branch == node.branch
           true
-        @branch_names = $.grep @branch_names, (name, i) =>
+        @branch_names = $.grep @branch_names, (name, i) ->
           return false if name == node.branch.name
           true
         return false

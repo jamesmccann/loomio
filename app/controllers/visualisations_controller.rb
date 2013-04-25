@@ -25,7 +25,7 @@ class VisualisationsController < ApplicationController
     end
   end
 
-  #GET /contained_branches.json
+  #GET /containing_branches.json
   def containing_branches
     @visualisation = Visualisation.new
     branches = @visualisation.branches
