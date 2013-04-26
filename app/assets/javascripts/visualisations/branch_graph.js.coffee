@@ -21,7 +21,7 @@ class BranchGraph
     #  - links are always source < target; edge directions are set by 'left' and 'right'.
     $.get "/visualisations/branches.json", (data) ->
       branch_data = data
-      $.get "/visualisations/containing_branches.json", (merge_data) ->
+      $.get "/visualisations/merged_branches.json", (merge_data) ->
         Visualisation.branchGraph.initGraphData(branch_data, merge_data)
 
   initGraphData: (branch_data, merge_data) =>
@@ -59,13 +59,17 @@ class BranchGraph
       @branch_names[obj.name] = i + 1
 
     #check for merges/edges for each branch/node
-    $.each merge_data, (key, val) =>
-      $.each val, (i, el) =>
-        @links.push
-          source: @branch_names[key]
-          target: @branch_names[el]
-          left: false
-          right: true
+    $.each merge_data, (base_key, base) =>
+      $.each base, (branch_key, merged_branch) =>
+        if merged_branch.left || merged_branch.right
+          @links.push
+            source: @branch_names[base_key]
+            target: @branch_names[branch_key]
+            left: merged_branch.left
+            right: merged_branch.right
+
+    console.log("links")
+    console.log(@links)
 
     @initGraph(false)
 

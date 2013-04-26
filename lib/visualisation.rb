@@ -9,11 +9,23 @@ class Visualisation
   end
 
   def branches
-    @repo.refs
+    branches_with_remotes
+  end
+
+  def branches_with_remotes
+    `git branch -a`.split("\n").each { |b| b.gsub!(/[*]?\s/, '') and b.gsub!(/remotes\//, '') }
+  end
+
+  def local_branches
+    @repo.heads
   end
 
   def number_of_branches
     @repo.heads.size
+  end
+
+  def head_commit_sha(branch)
+    `git rev-parse #{branch}`
   end
 
   # this does not work...
@@ -41,27 +53,31 @@ class Visualisation
     `git cherry master #{branch}`.split("\n").size
   end 
 
-  def repo_branches_merged
+  def repo_branches_merged(remotes = true)
     merged_branches = {}
-    require 'ruby-debug'
-    compare_branches = @repo.heads
+    compare_branches = remotes ? branches_with_remotes : @repo.heads
     compare_branches.each do |b1|
       b1_merges = {}
       compare_branches.each do |b2|
-        next if b1 == b2 || (merged_branches.has_key?(b2.name.to_sym) && merged_branches[b2.name.to_sym].has_key?(b1.name.to_sym))
-        puts "comparing #{b1.name} with #{b2.name}"
+        next if b1 == b2 || b2.split("/").last == b1 || 
+            (merged_branches.has_key?(b2.to_sym) && merged_branches[b2.to_sym].has_key?(b1.to_sym))
+        #puts "comparing #{b1} with #{b2}"
         directions = {}
-        directions.merge!(:left => true) if branch_merged_with_base?(b1.name, b2.name)
-        directions.merge!(:right => true) if right = branch_merged_with_base?(b2.name, b1.name)
-        b1_merges.merge!(b2.name.to_sym => directions)
+        directions.merge!(:left => true) if branch_merged_with_base?(b1, b2, remotes)
+        directions.merge!(:right => true) if right = branch_merged_with_base?(b2, b1, remotes)
+        b1_merges.merge!(b2.to_sym => directions)
       end
-      merged_branches.merge!(b1.name.to_sym => b1_merges)
+      merged_branches.merge!(b1.to_sym => b1_merges)
     end
-    puts merged_branches
+    merged_branches
   end
 
-  def branch_merged_with_base?(base, branch)
-    `git branch --merged #{base} #{branch}`.length > 0
+  def branch_merged_with_base?(base, branch, remotes)
+    if remotes 
+      `git branch -a --merged #{base} #{branch}`.length > 0
+    else
+      `git branch --merged #{base} #{branch}`.length > 0
+    end
   end
   
   #printout merge commits between base and topic branch

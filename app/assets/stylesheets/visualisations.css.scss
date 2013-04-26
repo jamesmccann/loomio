@@ -1,3 +1,17 @@
+/*
+ *= require lib/flat_ui/flat-ui
+*/
+
+body { margin: 0px; }
+
+#sidebar {
+  background-color: #EFEFEF;
+  border-left: solid 1px #DDD;
+  height: 100%;
+  position: fixed;
+  left: 0;
+}
+
 svg {
   background-color: #FFF;
   cursor: default;
