@@ -2,14 +2,46 @@
  *= require lib/flat_ui/flat-ui
 */
 
-body { margin: 0px; }
+body,html { height: 100%; margin: 0px; }
 
 #sidebar {
+  margin: 0px;
+  padding-left: 15px;
   background-color: #EFEFEF;
   border-left: solid 1px #DDD;
-  height: 100%;
+  width: 300px;
+  height: 900px;
   position: fixed;
-  left: 0;
+  float: left;
+
+  input { width: auto; }
+
+  #filter_names_input {
+    margin: 10px 10px 15px 0px;
+  }
+
+  .apply-btn {
+    display: block;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-right: 15px;
+    margin-top: 20px;   
+  }
+}
+
+#vis-display { 
+  margin-left: 330px;
+  width: 900px;
+  height: 900px;
+  float: left;
+}
+
+#vis-loading {
+  width: 250px;
+  margin: 100px auto;
+
+  h4 { float: right }
+  img { float: left }
 }
 
 svg {
@@ -28,12 +60,16 @@ svg:not(.active):not(.ctrl) {
 
 path.link {
   fill: none;
-  stroke: #000;
+  stroke: #999;
+  color: #999;
   stroke-width: 2px;
   cursor: default;
 }
 
+marker { stroke: #999; color: #999 }
+
 svg:not(.active):not(.ctrl) path.link {
+  color: #999;
   cursor: pointer;
 }
 

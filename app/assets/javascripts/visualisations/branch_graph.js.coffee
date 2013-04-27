@@ -1,12 +1,13 @@
 class BranchGraph 
   constructor: ->
     @initializeD3()
-    @initializeGraphData()
+    @getGraphData()
+    @initializeControls()
 
   initializeD3: ->
     # set up SVG for D3
-    @width = 960
-    @height = 900
+    @width = $("#vis-display").width();
+    @height = $("#vis-display").height();
     tcolors = d3.scale.category10()
     @body = d3.select("body")
     @svg = @body.select("#vis-display")
@@ -15,7 +16,7 @@ class BranchGraph
               .attr("height", @height)
     @lastKeyDown = -1;
 
-  initializeGraphData: ->
+  getGraphData: ->
     # set up initial nodes and links
     #  - nodes are known by 'id', not by index in array.
     #  - links are always source < target; edge directions are set by 'left' and 'right'.
@@ -23,6 +24,11 @@ class BranchGraph
       branch_data = data
       $.get "/visualisations/merged_branches.json", (merge_data) ->
         Visualisation.branchGraph.initGraphData(branch_data, merge_data)
+
+  initializeControls: ->
+    $("#apply-filters-btn").click () =>
+      @apply_filters()
+      false
 
   initGraphData: (branch_data, merge_data) =>
     @branches = branch_data.branches;
@@ -55,7 +61,7 @@ class BranchGraph
     $.each @branches, (i, obj) =>
       #calculate the percentage diff for this branch
       percent_diff = (obj.diff.add + obj.diff.del) / average_diff
-      @nodes.push id: i + 1, branch: obj, size: percent_diff, reflexive: false
+      @nodes.push id: i + 1, branch: obj, size: percent_diff, reflexive: false, hidden: false
       @branch_names[obj.name] = i + 1
 
     #check for merges/edges for each branch/node
@@ -67,9 +73,16 @@ class BranchGraph
             target: @branch_names[branch_key]
             left: merged_branch.left
             right: merged_branch.right
+            hidden: false
 
     console.log("links")
     console.log(@links)
+
+    #store original state
+    @all_nodes = @nodes
+    @all_links = @links
+    @all_branches = @branches
+    @all_branch_names = @branch_names
 
     @initGraph(false)
 
@@ -103,7 +116,7 @@ class BranchGraph
         .attr('orient', 'auto')
       .append('svg:path')
         .attr('d', 'M0,-5L10,0L0,5')
-        .attr('fill', '#000');
+        .attr('fill', '#999');
 
     @svg.append('svg:defs').append('svg:marker')
         .attr('id', 'start-arrow')
@@ -114,7 +127,7 @@ class BranchGraph
         .attr('orient', 'auto')
       .append('svg:path')
         .attr('d', 'M10,-5L0,0L10,5')
-        .attr('fill', '#000');
+        .attr('fill', '#999');
 
     # line displayed when dragging new nodes
     @drag_line = @svg.append('svg:path')
@@ -135,6 +148,9 @@ class BranchGraph
     @svg.on('mousedown', @mousedown)
       .on('mousemove', @mousemove)
       .on('mouseup', @mouseup)
+
+    #remove the loading div here
+    $("#vis-loading").hide();
     @restart()
 
   resetMouseVars: -> 
@@ -244,13 +260,18 @@ class BranchGraph
     
     # remove old links
     @path.exit().remove()
-    
+
     # circle (node) group
     # NB: the function arg is crucial here! nodes are known by id, not by index!
     @circle = @circle.data(@nodes, (d) ->
       d.id
     )
-    
+
+    #hide filtered nodes
+    @circle.selectAll("circle").select((d) ->
+      d.branch.hidden == false ? this : null
+    )
+
     # update existing nodes (reflexive & selected visual states)
     @circle.selectAll("circle").style("fill", (d) ->
       (if (d is @selected_node) then d3.rgb(branch_color(d)).brighter().toString() else d3.rgb(branch_color(d)))
@@ -338,7 +359,24 @@ class BranchGraph
     # set the graph in motion
     @force.start()
 
-  filter_merged_with_master: ->
+  clear_filters : () ->
+    @nodes = @all_nodes
+    @links = @all_links
+    @branches = @all_branches
+    @branch_names = @all_branch_names
+
+  apply_filters: () ->
+    @clear_filters()
+
+    #filter branches merged with master
+    if $("#filter_merged_checkbox").is(":checked")
+      @filter_merged_with_master()
+
+    #filter branches by name
+    filter_name_query = $("#filter_names_input").val()
+    @filter_branch_names(filter_name_query) if filter_name_query.length > 0
+
+  filter_merged_with_master: () ->
     @nodes = $.grep @nodes, (node, i) =>
       if node.branch.merged_with_master is true
         return true if node.branch.name == "master"
@@ -353,8 +391,27 @@ class BranchGraph
           true
         return false
       true
-    @initGraph(true)
-    return true
+
+    @restart()
+
+  filter_branch_names: (query) ->
+    console.log("filtering branch names " + query)
+    @nodes = $.grep @nodes, (node, i) =>
+      if node.branch.name.lastIndexOf(query, 0) isnt 0 
+        return true if node.branch.name == "master"
+        @links = $.grep @links, (link, i) ->
+          return false if link.source == node or link.target == node
+          true
+        @branches = $.grep @branches, (branch, i) ->
+          return false if branch == node.branch
+          true
+        @branch_names = $.grep @branch_names, (name, i) ->
+          return false if name == node.branch.name
+          true
+        return false
+      true        
+
+    @restart()
 
   branch_color = (node) ->
     return "#1f77b4"  if node.branch.name is "master"

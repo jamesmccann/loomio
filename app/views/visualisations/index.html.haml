@@ -1,3 +1,11 @@
-#sidebar.span4
+#sidebar
   %h1 Visualisations
-#vis-display
+  = label_tag :filter_merged do
+    = check_box_tag :filter_merged, "1", false, :id => "filter_merged_checkbox"
+    Filter merged with master
+  =text_field_tag :filter_names, "", :placeholder => "Filter branch name", :id => "filter_names_input"
+  =link_to "Apply Filters", "#", :class => "btn btn-large btn-block apply-btn", :id => "apply-filters-btn"
+#vis-display  
+  #vis-loading
+    %h4 Loading Repository Data...
+    =image_tag "visualisations/ajax-loader.gif"
