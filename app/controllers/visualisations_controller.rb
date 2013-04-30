@@ -56,4 +56,37 @@ class VisualisationsController < ApplicationController
     end
   end
 
+  def branches_commit_filters
+    @visualisation = Visualisation.new
+    include_commit_sha = params[:include]
+    exclude_commit_sha = params[:exclude]
+
+    branches = branches_include = branches_exclude = []
+
+    branches_include = @visualisation.branches_containing_commit(include_commit_sha) if include_commit_sha.present?
+    branches_exclude = @visualisation.branches_excluding_commit(exclude_commit_sha) if exclude_commit_sha.present?
+    puts branches_exclude
+
+    if !branches_include.empty? 
+      branches = branches_include - branches_exclude
+    else
+      branches = branches_exclude
+    end
+
+    respond_to do |format|
+      format.json { render :json => branches.to_json }
+    end
+  end
+
+  def branches_excluding_commit
+    @visualisation = Visualisation.new
+    commit_sha = params[:data][:commit]
+    branch_names = @visualisation.branches_excluding_commit(commit_sha)
+
+    respond_to do |format|
+      format.json { render :json => branch_names.to_json }
+    end
+  end
+
+
 end

@@ -1,9 +1,11 @@
 #sidebar
-  %h1 Visualisations
+  %h1 Branches 
   = label_tag :filter_merged do
     = check_box_tag :filter_merged, "1", false, :id => "filter_merged_checkbox"
     Filter merged with master
-  =text_field_tag :filter_names, "", :placeholder => "Filter branch name", :id => "filter_names_input"
+  =text_field_tag :filter_names, "", :placeholder => "Filter branch names", :id => "filter_names_input"
+  =text_field_tag :show_commit, "", :placeholder => "Show commit", :id => "show_commit_input", :class => "commit_filters_input"
+  =text_field_tag :exclude_commit, "", :placeholder => "Exclude commit", :id => "exclude_commit_input", :class => "commit_filters_input"
   =link_to "Apply Filters", "#", :class => "btn btn-large btn-block apply-btn", :id => "apply-filters-btn"
 #vis-display  
   #vis-loading

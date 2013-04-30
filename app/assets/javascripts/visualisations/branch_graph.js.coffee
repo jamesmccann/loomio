@@ -282,17 +282,22 @@ class BranchGraph
     g = @circle.enter().append("svg:g")
     
     # reposition drag line
+    vis = @
     g.append("svg:circle").attr("class", "node")
       .attr("r", (d) -> 10 * d.size)
       .style("fill", (d) -> (if (d is @selected_node) then d3.rgb(branch_color(d)).toString() else d3.rgb(branch_color(d))))
       .style("stroke", (d) -> d3.rgb(branch_color(d)).darker().toString())
       .classed("reflexive", (d) -> d.reflexive)
       .on("mouseover", (d) ->
-        return  if not @mousedown_node or d is @mousedown_node
-        d3.select(this).attr "transform", "scale(1.1)")
+        return if d is vis.mousedown_node
+        d3.selectAll("circle").filter((d2) -> d != d2).transition().style "opacity", "0.25"
+        d3.selectAll("text").filter((d2) -> d != d2).transition().style "opacity", "0.15"
+        d3.selectAll("path").filter((d2) -> d != d2).transition().style "opacity", "0.15")
       .on("mouseout", (d) ->
-        return  if not @mousedown_node or d is @mousedown_node
-        d3.select(this).attr "transform", "")
+        return if d is vis.mousedown_node
+        d3.selectAll("circle").transition().style "opacity", "1"
+        d3.selectAll("text").transition().style "opacity", "1"
+        d3.selectAll("path").transition().style "opacity", "1")
       .on("mousedown", (d) ->
         return  if d3.event.ctrlKey
         @mousedown_node = d
@@ -376,6 +381,20 @@ class BranchGraph
     filter_name_query = $("#filter_names_input").val()
     @filter_branch_names(filter_name_query) if filter_name_query.length > 0
 
+    additional_requests = false
+    #filter branches containing commit
+    show_commit_sha = $("#show_commit_input").val()
+    exclude_commit_sha = $("#exclude_commit_input").val()
+
+    if show_commit_sha.length > 0 || exclude_commit_sha.length > 0
+      additional_requests = true
+      @filter_branch_commits(show_commit_sha, exclude_commit_sha)
+    
+    # if we arent making any more requests for this data then
+    # restart, otherwise the additional requests callback will make restart call
+    if !additional_requests
+      @restart()
+
   filter_merged_with_master: () ->
     @nodes = $.grep @nodes, (node, i) =>
       if node.branch.merged_with_master is true
@@ -391,8 +410,6 @@ class BranchGraph
           true
         return false
       true
-
-    @restart()
 
   filter_branch_names: (query) ->
     console.log("filtering branch names " + query)
@@ -411,7 +428,25 @@ class BranchGraph
         return false
       true        
 
-    @restart()
+  filter_branch_commits: (include_commit_sha, exclude_commit_sha) ->
+    json_data = {include: include_commit_sha, exclude: exclude_commit_sha}
+    $.get "/visualisations/branches_commit_filters.json", json_data, (data) =>
+      branch_names = data
+      @nodes = $.grep @nodes, (node, i) =>
+        if $.inArray(node.branch.name, branch_names) is -1
+          return true if node.branch.name == "master"
+          @links = $.grep @links, (link, i) ->
+            return false if link.source == node or link.target == node
+            true
+          @branches = $.grep @branches, (branch, i) ->
+            return false if branch == node.branch
+            true
+          @branch_names = $.grep @branch_names, (name, i) ->
+            return false if name == node.branch.name
+            true
+          return false
+        true
+      @restart() 
 
   branch_color = (node) ->
     return "#1f77b4"  if node.branch.name is "master"

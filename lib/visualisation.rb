@@ -45,8 +45,21 @@ class Visualisation
     `git branch --contains #{commit_sha}`.split("\n").each {|b| b.gsub!(/[*]?\s/, '')}.include?(branch)
   end
 
-  def branches_containing_commit(commit_sha)
-    `git branch --contains #{commit_sha}`.split("\n").each { |b| b.gsub!(/[*]?\s/, '') }
+  def branches_containing_commit(commit_sha, remotes = false)
+    puts "git branch -a --contains #{commit_sha}"
+    if remotes 
+      return `git branch -a --contains #{commit_sha}`.split("\n").each { |b| b.gsub!(/[*]?\s/, '') }
+    else 
+      return `git branch --contains #{commit_sha}`.split("\n").each { |b| b.gsub!(/[*]?\s/, '') }
+    end
+  end
+
+  def branches_excluding_commit(commit_sha, remotes = false)
+    if remotes
+      return branches - `git branch --contains #{commit_sha}`.split("\n").each { |b| b.gsub!(/[*]?\s/, '') }
+    else
+      return branches - `git branch --contains #{commit_sha}`.split("\n").each { |b| b.gsub!(/[*]?\s/, '') }
+    end
   end
 
   def branch_diff_number_commits(branch)
