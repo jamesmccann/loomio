@@ -1,5 +1,5 @@
 namespace :stats do
-  task :all => [:environment, :group_requests, :users, :groups,   :events] do
+  task :all => [:environment, :group_requests, :users, :groups, :events, :discussions, :discussion_read_logs] do
   end
 
   task :group_requests => :environment do
@@ -10,7 +10,7 @@ namespace :stats do
     require 'csv'
     file = CSV.generate do |csv|
       csv << ["id", "name", "created_at", "viewable_by", "parent_id", "description", "memberships_count", "archived_at", "distribution_metric", "sectors_metric", "other_sectors_metric", "cannot_contribute"]
-      Group.all.each do |group|
+      Group.find_each do |group|
         if group.viewable_by == :everyone
           csv << [group.id, group.name, group.created_at, group.viewable_by, group.parent_id, group.description, group.memberships_count, group.archived_at, group.distribution_metric, group.sectors_metric, group.other_sectors_metric, group.cannot_contribute]
         else
@@ -19,22 +19,22 @@ namespace :stats do
       end
     end
 
-    s3write('groups.csv', file)
+    fogwrite('groups.csv', file)
   end
 
   task :users => :environment do   # Export all users' create dates
     require 'csv'
     file = CSV.generate do |csv|
       csv << ["id", "created_at", "last_sign_in_at", "memberships_count"]
-      User.all.each do |user|
+      User.find_each do |user|
         csv << [scramble(user.id), user.created_at, user.last_sign_in_at, user.memberships_count]
       end
     end
 
-    s3write('users.csv', file)
+    fogwrite('users.csv', file)
   end
 
-task :events => :environment do    # Export all events, scramble users, scramble private groups & subgroups
+  task :events => :environment do    # Export all events, scramble users, scramble private groups & subgroups
     require 'csv'
 
     file = CSV.generate do |csv|
@@ -98,27 +98,63 @@ task :events => :environment do    # Export all events, scramble users, scramble
       end
     end
 
-    s3write('events.csv', file)
+    fogwrite('events.csv', file)
   end
+
+  task :discussions => :environment do
+    require 'csv'
+    file = CSV.generate do |csv|
+      csv << ["id", "group_id", "created_at", "updated_at", "last_comment_at", "author_id"]
+      Discussion.find_each do |d|
+        csv << [d.id, d.group_id, d.created_at, d.updated_at, d.last_comment_at, scramble(d.author_id)]
+      end
+    end
+    fogwrite('discussions.csv', file)
+  end
+
+  task :discussion_read_logs => :environment do
+    require 'csv'
+    file = CSV.generate do |csv|
+      csv << ["id", "discussion_id", "created_at", "discussion_last_viewed_at", "user_id"]
+      DiscussionReadLog.find_each do |l|
+        csv << [l.id, l.discussion_id, l.created_at, l.discussion_last_viewed_at, scramble(l.user_id)]
+      end
+    end
+    fogwrite('discussion_read_logs.csv', file)
+  end
+
 
   def export_model_to_s3(model, fields)
     require 'csv'
     file = CSV.generate do |csv|
       csv << fields
-      model.all.each do |m|
-        csv << fields.map { |x| eval('m.' + x) }
+      model.find_each do |model|
+        csv << model.attributes.values_at(*fields)
       end
     end
 
-    s3write(model.name + '.csv', file)
+    fogwrite(model.name + '.csv', file)
   end
 
   def scramble(method)
     Digest::MD5.hexdigest(method.to_s)
   end
 
-  def s3write (filename, data)
-    raise "Please set environment variable CANONICAL_HOST" if ENV["CANONICAL_HOST"].blank?
-    AWS::S3.new.buckets['loomio-metrics'].objects.create(ENV["CANONICAL_HOST"] + '-' + filename, data)
+  def fogwrite(filename, data)
+    name_space = ENV["CANONICAL_HOST"]
+    name_space ||= ENV['METRICS_NAMESPACE']
+    raise "Please set environment variable METRICS_NAMESPACE or CANONICAL_HOST" if name_space.blank?
+
+    connection = Fog::Storage.new({
+      :provider                 => 'AWS',
+      :aws_access_key_id        => ENV['AWS_ACCESS_KEY_ID'],
+      :aws_secret_access_key    => ENV['AWS_SECRET_ACCESS_KEY']
+    })
+
+    connection.directories.get('loomio-metrics').files.create(
+      :key    => name_space + '-' + filename,
+      :body   => data,
+      :acl    => 'authenticated-read'
+    )
   end
 end

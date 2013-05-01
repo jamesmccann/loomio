@@ -28,7 +28,7 @@ gem 'paperclip', '~> 3.4.0'
 gem 'kaminari', '~> 0.13.0'
 gem 'activeadmin', '~> 0.4.3'
 gem 'nokogiri', '~> 1.5.9'
-gem 'redcarpet', '~> 2.1.1'
+gem 'redcarpet', '~> 2.2.2'
 gem 'rabl', '~> 0.7.3'
 gem 'twitter-text', '~> 1.5.0'
 gem 'jquery-atwho-rails', '~> 0.1.6'
@@ -39,7 +39,6 @@ gem 'rack-canonical-host', '~> 0.0.8'
 gem 'delayed_job_active_record', '~> 0.3.3'
 gem 'hirefireapp', '~> 0.0.8'
 gem 'foreman', '~> 0.60.2'
-gem 'aws-sdk', '~> 1.8.5'
 gem 'rinku', '~> 1.7.2'
 
 gem 'grit'
@@ -51,6 +50,8 @@ gem 'd3_rails'
 #       https://github.com/rails/sass-rails/issues/38#issuecomment-2046678
 gem 'sass-rails',   '~> 3.2.6'
 gem 'coffee-rails', '~> 3.2.2'
+gem 'piwik_analytics', '~> 1.0.1'
+gem 'fog'
 
 # Gems used only for assets and not required
 # in production environments by default.

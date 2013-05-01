@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130402220904) do
+ActiveRecord::Schema.define(:version => 20130422085712) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -27,6 +27,25 @@ ActiveRecord::Schema.define(:version => 20130402220904) do
   add_index "active_admin_comments", ["author_type", "author_id"], :name => "index_active_admin_comments_on_author_type_and_author_id"
   add_index "active_admin_comments", ["namespace"], :name => "index_active_admin_comments_on_namespace"
   add_index "active_admin_comments", ["resource_type", "resource_id"], :name => "index_admin_notes_on_resource_type_and_resource_id"
+
+  create_table "announcement_dismissals", :force => true do |t|
+    t.integer  "announcement_id"
+    t.integer  "user_id"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+  end
+
+  add_index "announcement_dismissals", ["announcement_id"], :name => "index_announcement_dismissals_on_announcement_id"
+  add_index "announcement_dismissals", ["user_id"], :name => "index_announcement_dismissals_on_user_id"
+
+  create_table "announcements", :force => true do |t|
+    t.text     "message",                      :null => false
+    t.string   "locale",     :default => "en", :null => false
+    t.datetime "starts_at",                    :null => false
+    t.datetime "ends_at",                      :null => false
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+  end
 
   create_table "comment_votes", :force => true do |t|
     t.integer  "comment_id"
@@ -92,7 +111,6 @@ ActiveRecord::Schema.define(:version => 20130402220904) do
     t.datetime "discussion_last_viewed_at"
   end
 
-  add_index "discussion_read_logs", ["discussion_id"], :name => "index_motion_read_logs_on_discussion_id"
   add_index "discussion_read_logs", ["user_id", "discussion_id"], :name => "index_discussion_read_logs_on_user_id_and_discussion_id"
   add_index "discussion_read_logs", ["user_id"], :name => "index_motion_read_logs_on_user_id"
 
@@ -262,8 +280,9 @@ ActiveRecord::Schema.define(:version => 20130402220904) do
     t.boolean  "subscribed_to_proposal_closure_notifications",               :default => true,       :null => false
     t.string   "authentication_token"
     t.string   "unsubscribe_token"
-    t.integer  "memberships_count",                                          :default => 0,          :null => false
-    t.boolean  "uses_markdown",                                              :default => false
+    t.integer  "memberships_count",                                           :default => 0,          :null => false
+    t.boolean  "uses_markdown",                                               :default => false
+    t.string   "language_preference"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

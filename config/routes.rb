@@ -63,10 +63,8 @@ Loomio::Application.routes.draw do
   end
 
   resources :users do
-    put :edit_name, on: :member
     put :set_avatar_kind, on: :member
     post :upload_new_avatar, on: :member
-    post :set_markdown, on: :member
   end
 
   match "/users/dismiss_system_notice", :to => "users#dismiss_system_notice",
@@ -101,7 +99,6 @@ Loomio::Application.routes.draw do
   match '/blog' => 'high_voltage/pages#show', :id => 'blog'
   match '/collaborate', to: "woc#index", as: :collaborate
 
-  match "/pages/*id" => 'pages#show', :as => :page, :format => false
   root :to => 'pages#show', :id => 'home'
 
   #redirect old pages:
@@ -117,7 +114,11 @@ Loomio::Application.routes.draw do
   match '/contact' => redirect('/pages/home#who')
   match '/demo' => redirect('/')
 
+  match "/pages/*id" => 'pages#show', :as => :page, :format => false
+
   resources :woc, only: :index do
     post :send_request, on: :collection
   end
+
+  match 'announcements/:id/hide', to: 'announcements#hide', as: 'hide_announcement'
 end
