@@ -65,9 +65,11 @@ class BranchGraph
       @branch_names[obj.name] = i + 1
 
     #check for merges/edges for each branch/node
+    @linked_nodes = {}
     $.each merge_data, (base_key, base) =>
       $.each base, (branch_key, merged_branch) =>
         if merged_branch.left || merged_branch.right
+          @linked_nodes[@branch_names[base_key] + ", " + @branch_names[branch_key]] = 1
           @links.push
             source: @branch_names[base_key]
             target: @branch_names[branch_key]
@@ -179,6 +181,7 @@ class BranchGraph
       "translate(" + d.x + "," + d.y + ")"
 
   mousedown: ->
+    return
     # prevent I-bar on drag
     #d3.event.preventDefault();
     # because :active only works in WebKit?
@@ -186,13 +189,8 @@ class BranchGraph
     return  if d3.event.ctrlKey or @mousedown_node or @mousedown_link
     @restart()
 
-  mousemove: ->
-    return  unless Visualisation.branchGraph.mousedown_node
-    # update drag line
-    Visualisation.branch_graph.drag_line.attr "d", "M" + @mousedown_node.x + "," + @mousedown_node.y + "L" + d3.mouse(this)[0] + "," + d3.mouse(this)[1]
-    @restart()
-
   mouseup: ->
+    return
     # hide drag line
     @drag_line.classed("hidden", true).style "marker-end", ""  if @mousedown_node
     # because :active only works in WebKit?
@@ -247,16 +245,7 @@ class BranchGraph
       (if d.left then "url(#start-arrow)" else "")
     ).style("marker-end", (d) ->
       (if d.right then "url(#end-arrow)" else "")
-    ).on "mousedown", (d) ->
-      return  if d3.event.ctrlKey
-      # select link
-      @mousedown_link = d
-      if @mousedown_link is @selected_link
-        @selected_link = null
-      else
-        @selected_link = @mousedown_link
-      @selected_node = null
-      restart()
+    )
     
     # remove old links
     @path.exit().remove()
@@ -284,75 +273,35 @@ class BranchGraph
     # reposition drag line
     vis = @
     g.append("svg:circle").attr("class", "node")
-      .attr("r", (d) -> 10 * d.size)
+      .attr("branch", (d) -> d.branch.name)
+      .attr("r", (d) -> 
+        rad = 10 * d.size
+        rad = 2 if rad < 2 
+        return rad
+      )
       .style("fill", (d) -> (if (d is @selected_node) then d3.rgb(branch_color(d)).toString() else d3.rgb(branch_color(d))))
       .style("stroke", (d) -> d3.rgb(branch_color(d)).darker().toString())
       .classed("reflexive", (d) -> d.reflexive)
       .on("mouseover", (d) ->
-        return if d is vis.mousedown_node
         d3.selectAll("circle").filter((d2) -> d != d2).transition().style "opacity", "0.25"
-        d3.selectAll("text").filter((d2) -> d != d2).transition().style "opacity", "0.15"
-        d3.selectAll("path").filter((d2) -> d != d2).transition().style "opacity", "0.15")
+        d3.selectAll("text").filter((d2) -> d != d2).transition().style "opacity", "0.10"
+        d3.selectAll("path.link").filter((d2) -> d != d2).transition().style "opacity", "0.10")
       .on("mouseout", (d) ->
-        return if d is vis.mousedown_node
         d3.selectAll("circle").transition().style "opacity", "1"
         d3.selectAll("text").transition().style "opacity", "1"
         d3.selectAll("path").transition().style "opacity", "1")
       .on("mousedown", (d) ->
-        return  if d3.event.ctrlKey
-        @mousedown_node = d
-        if @mousedown_node is @selected_node
-          @selected_node = null
-        else
-          @selected_node = @mousedown_node
-        @selected_link = null
-        @drag_line.style("marker-end", "url(#end-arrow)").classed("hidden", false).attr "d", "M" + mousedown_node.x + "," + mousedown_node.y + "L" + mousedown_node.x + "," + mousedown_node.y
-        @restart())
-      .on "mouseup", (d) ->
-        return  unless @mousedown_node
-        # needed by FF
-        @drag_line.classed("hidden", true).style "marker-end", ""
-        # check for drag-to-self
-        @mouseup_node = d
-        if @mouseup_node is @mousedown_node
-          resetMouseVars()
-          return
-        # unenlarge target node
-        d3.select(this).attr "transform", ""
-        
-        # add link to graph (update if exists)
-        # NB: links are strictly source < target; arrows separately specified by booleans
-        source = undefined
-        target = undefined
-        direction = undefined
-        if @mousedown_node.id < @mouseup_node.id
-          source = @mousedown_node
-          target = @mouseup_node
-          direction = "right"
-        else
-          source = @mouseup_node
-          target = @mousedown_node
-          direction = "left"
-        link = undefined
-        link = @links.filter((l) ->
-          l.source is source and l.target is target
-        )[0]
-        if link
-          link[direction] = true
-        else
-          link =
-            source: source
-            target: target
-            left: false
-            right: false
-
-          link[direction] = true
-          @links.push link
-        
-        # select new link
-        @selected_link = link
-        @selected_node = null
-        @restart()
+        vis.mousedown_node = d
+        d3.selectAll("circle").filter((d2) -> 
+          vis.neighbouring(vis.dom_node(d)[0].__data__.id, vis.dom_node(d2)[0].__data__.id)
+          ).transition().style "opacity", "1"
+        d3.selectAll("text").filter((d2) -> 
+          vis.neighbouring(vis.dom_node(d)[0].__data__.id, vis.dom_node(d2)[0].__data__.id)
+        ).transition().style "opacity", "1"
+        d3.selectAll("path.link").filter((d2) -> 
+          return false if d2 is undefined
+          return true if d2.source == vis.mousedown_node || d2.target == vis.mousedown_node
+        ).transition().style "opacity", "1")
     
     # show node IDs
     g.append("svg:text").attr("x", 30).attr("y", 4).attr("class", "name").text (d) ->
@@ -394,6 +343,9 @@ class BranchGraph
     # restart, otherwise the additional requests callback will make restart call
     if !additional_requests
       @restart()
+
+  dom_node: (data) ->
+    $("circle[branch=" + "'#{data.branch.name}'" + "]")
 
   filter_merged_with_master: () ->
     @nodes = $.grep @nodes, (node, i) =>
@@ -471,6 +423,11 @@ class BranchGraph
     $.each @nodes, (i, node) ->
       if node.branch.name != "master"
         node.size = (node.branch.diff.add + node.branch.diff.del) / average_diff
+
+  neighbouring: (node_id, other_id) ->
+    @linked_nodes[node_id + ", " + other_id] == 1 ||
+      @linked_nodes[other_id + ", " + node_id] == 1 ||
+        node_id == other_id
 
 
 Visualisation.BranchGraph = BranchGraph
