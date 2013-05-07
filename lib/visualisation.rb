@@ -97,7 +97,8 @@ class Visualisation
   #`git log #{branch} #{base} --oneline --date-order --merges --reverse -1`
 
   def branch_diff_size(branch)
-    raw_diff_stats = `git diff --numstat master..#{branch}`
+    merge_base_commit = `git merge-base master #{branch}`.gsub("/\n/", '').strip!
+    raw_diff_stats = `git diff --numstat #{merge_base_commit} #{branch}`
     diff_stats = raw_diff_stats.split(/\n/)
     additions = deletions = 0
     diff_stats.each do |line|
@@ -107,6 +108,36 @@ class Visualisation
     end
 
     return additions, deletions
+  end
+
+  def commits_for_branch(branch_name)
+    commits = {}
+    #default returned is 10
+    @repo.commits(branch_name, 10).each do |commit|
+      sha1 = commit.id
+      commit_stats = commit.stats.to_hash.except("id")
+      commit_stats.merge!(:date => commit.date)
+      commits.merge!(sha1.to_sym => commit_stats)
+    end
+    commits
+  end
+
+  def diff_file_stats(commit_or_branch)
+    `git diff --numstat #{commit_or_branch}`
+  end
+
+  def branch_diff_commit_files(commit_sha = nil)
+    merge_base_commit = `git merge-base master #{commit_sha}`.gsub("/\n/", '').strip!
+    diff_stats = `git diff --numstat #{merge_base_commit} #{commit_sha}`.split(/\n/)
+    files = {}
+    additions = deletions = 0
+    diff_stats.each do |line|
+      cols = line.split
+      additions += cols[0].to_i 
+      deletions += cols[1].to_i 
+      files.merge!(cols[2].to_sym => { :add => additions, :del => deletions })
+    end
+    files.merge!(:total => { :add => additions, :del => deletions })
   end
 
 end

@@ -1,2 +1,4 @@
 //= require d3
-//= require_tree ./visualisations
+//= require visualisations/data_convert
+//= require visualisations/commit_graph
+//= require visualisations/branch_graph

@@ -1,8 +1,9 @@
 class BranchGraph 
   constructor: ->
-    @initializeD3()
-    @getGraphData()
-    @initializeControls()
+    new Visualisation.CommitGraph("master")
+    # @initializeD3()
+    # @getGraphData()
+    # @initializeControls()
 
   initializeD3: ->
     # set up SVG for D3
@@ -57,6 +58,9 @@ class BranchGraph
       branch: @master
       size: 1.0
       reflexive: false
+      fixed: true
+      x: @width / 2
+      y: @height / 2
     @branch_names["master"] = 0
     $.each @branches, (i, obj) =>
       #calculate the percentage diff for this branch
@@ -131,11 +135,6 @@ class BranchGraph
         .attr('d', 'M10,-5L0,0L10,5')
         .attr('fill', '#999');
 
-    # line displayed when dragging new nodes
-    @drag_line = @svg.append('svg:path')
-      .attr('class', 'link dragline hidden')
-      .attr('d', 'M0,0L0,0');
-
     # handles to link and node element groups
     @path = @svg.append('svg:g').selectAll('path')
     @circle = @svg.append('svg:g').selectAll('g');
@@ -169,8 +168,8 @@ class BranchGraph
       dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
       normX = deltaX / dist
       normY = deltaY / dist
-      sourcePadding = (if d.left then 17 else 12)
-      targetPadding = (if d.right then 17 else 12)
+      sourcePadding = node_size(d.source) + 7
+      targetPadding = node_size(d.target) + 7
       sourceX = d.source.x + (sourcePadding * normX)
       sourceY = d.source.y + (sourcePadding * normY)
       targetX = d.target.x - (targetPadding * normX)
@@ -197,13 +196,6 @@ class BranchGraph
     @svg.classed "active", false
     # clear mouse event vars
     @resetMouseVars()
-
-  spliceLinksForNode: (node) ->
-    toSplice = @links.filter((l) ->
-      l.source is node or l.target is node
-    )
-    toSplice.map (l) ->
-      @links.splice @links.indexOf(l), 1
 
   keydown: ->
     d3.event.preventDefault()
@@ -274,12 +266,8 @@ class BranchGraph
     vis = @
     g.append("svg:circle").attr("class", "node")
       .attr("branch", (d) -> d.branch.name)
-      .attr("r", (d) -> 
-        rad = 10 * d.size
-        rad = 2 if rad < 2 
-        return rad
-      )
-      .style("fill", (d) -> (if (d is @selected_node) then d3.rgb(branch_color(d)).toString() else d3.rgb(branch_color(d))))
+      .attr("r", (d) -> node_size(d))
+      .style("fill", (d) -> (d3.rgb(branch_color(d))))
       .style("stroke", (d) -> d3.rgb(branch_color(d)).darker().toString())
       .classed("reflexive", (d) -> d.reflexive)
       .on("mouseover", (d) ->
@@ -302,6 +290,7 @@ class BranchGraph
           return false if d2 is undefined
           return true if d2.source == vis.mousedown_node || d2.target == vis.mousedown_node
         ).transition().style "opacity", "1")
+        .call(@force.drag())
     
     # show node IDs
     g.append("svg:text").attr("x", 30).attr("y", 4).attr("class", "name").text (d) ->
@@ -402,14 +391,20 @@ class BranchGraph
 
   branch_color = (node) ->
     return "#1f77b4"  if node.branch.name is "master"
+    return "#9CDECD" if node.branch.merged_with_master
     #color based on additions and deletions
     branch_diff = node.branch.diff.add - node.branch.diff.del
     if branch_diff > 0
       "#6ACD72"
-    else if branch_diff < 0
+    else if branch_diff <= 0
       "#C3554B"
-    else
-      "#9CDECD"
+
+  node_size = (node_data) ->
+    rad = 5 * node_data.size
+
+    rad = 5 if rad < 5 
+    rad = 20 if rad > 20
+    return rad
 
   recalculate_node_sizes: () ->
     percent_diff = 0.0

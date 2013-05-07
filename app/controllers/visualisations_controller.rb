@@ -88,5 +88,27 @@ class VisualisationsController < ApplicationController
     end
   end
 
+  def commits
+    @visualisation = Visualisation.new
+    branch_name = params[:branch]
+
+    #by default we are looking for the last 15 commits
+    commits = @visualisation.commits_for_branch(branch_name)
+
+    respond_to do |format|
+      format.json { render :json => commits.to_json }
+    end
+  end
+
+  def diff_stats
+    @visualisation = Visualisation.new
+    ref = params[:ref]
+
+    diff_stats = @visualisation.diff_file_stats(ref)
+
+    respond_to do |format|
+      format.json { render :json => diff_stats.to_json }
+    end    
+  end
 
 end
