@@ -122,8 +122,10 @@ class Visualisation
     commits
   end
 
-  def diff_file_stats(commit_or_branch)
-    `git diff --numstat #{commit_or_branch}`
+  def diff_file_stats(commit_sha)
+    puts commit_sha
+    merge_base_commit = `git merge-base master #{commit_sha}`.gsub("/\n/", '').strip!
+    `git diff --numstat #{merge_base_commit}`
   end
 
   def branch_diff_commit_files(commit_sha = nil)

@@ -1,17 +1,17 @@
 class BranchGraph 
   constructor: ->
-    new Visualisation.CommitGraph("master")
+    new Visualisation.CommitGraph("git-vis-2")
     # @initializeD3()
     # @getGraphData()
     # @initializeControls()
 
   initializeD3: ->
     # set up SVG for D3
-    @width = $("#vis-display").width();
-    @height = $("#vis-display").height();
+    @width = $("#branches-display").width();
+    @height = $("#branches-display").height();
     tcolors = d3.scale.category10()
     @body = d3.select("body")
-    @svg = @body.select("#vis-display")
+    @svg = @body.select("#branches-display")
               .append("svg")
               .attr("width", @width)
               .attr("height", @height)
@@ -201,21 +201,6 @@ class BranchGraph
     d3.event.preventDefault()
     return  if @lastKeyDown isnt -1
     @lastKeyDown = d3.event.keyCode
-    # # ctrl
-    # if d3.event.keyCode is 17
-    #   circle.call force.drag
-    #   svg.classed "ctrl", true
-    # return  if not selected_node and not selected_link
-    # switch d3.event.keyCode
-    #   # backspace
-    #   when 8, 46 # delete
-    #     if selected_node
-    #       nodes.splice nodes.indexOf(selected_node), 1
-    #       spliceLinksForNode selected_node
-    #     else links.splice links.indexOf(selected_link), 1  if selected_link
-    #     selected_link = null
-    #     selected_node = null
-    #     restart()
 
   # update graph (called when needed)
   restart: ->

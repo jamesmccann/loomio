@@ -4,15 +4,18 @@
 
 body,html { height: 100%; margin: 0px; }
 
-#sidebar {
+.sidebar {
   margin: 0px;
   padding-left: 15px;
-  background-color: #EFEFEF;
-  border-left: solid 1px #DDD;
   width: 300px;
-  height: 900px;
   position: fixed;
   float: left;
+}
+
+#sidebar-branches {
+  background-color: #EFEFEF;
+  border-left: solid 1px #DDD;
+  height: 900px;
 
   input { width: auto; }
 
@@ -31,11 +34,33 @@ body,html { height: 100%; margin: 0px; }
   }
 }
 
-#vis-display { 
+#sidebar-commits {
+  height: 300px;
+  padding-top: 15px;
+
+  h1.sidebar-header { margin-bottom: 0px; }
+}
+
+#branches-display { 
   margin-left: 330px;
   width: 900px;
   height: 900px;
   float: left;
+}
+
+#commits-display { 
+  width: 100%;
+  height: 550px; 
+  float: left;
+}
+
+#commits-toolbar { 
+  width: 100%;
+  height: 200px;
+  background-color: #EFEFEF;
+  border-left: solid 1px #DDD;
+  position: fixed;
+  bottom: 0px;
 }
 
 #vis-loading {
@@ -92,8 +117,7 @@ circle.node {
   cursor: pointer;
 }
 
-circle.node.reflexive {
-  stroke: #000 !important;
+circle.node.fixed {
   stroke-width: 2.5px;
 }
 
