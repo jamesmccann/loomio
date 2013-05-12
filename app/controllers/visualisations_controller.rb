@@ -90,10 +90,10 @@ class VisualisationsController < ApplicationController
 
   def commits
     @visualisation = Visualisation.new
-    branch_name = params[:branch]
+    ref = params[:ref]
 
     #by default we are looking for the last 15 commits
-    commits = @visualisation.commits_for_branch(branch_name)
+    commits = @visualisation.commits_for_branch(ref)
 
     respond_to do |format|
       format.json { render :json => commits.to_json }

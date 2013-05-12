@@ -112,11 +112,10 @@ class Visualisation
 
   def commits_for_branch(branch_name)
     commits = {}
-    #default returned is 10
-    @repo.commits(branch_name, 10).each do |commit|
+    #default returned is 15
+    @repo.commits(branch_name, 15).each do |commit|
       sha1 = commit.id
-      commit_stats = commit.stats.to_hash.except("id")
-      commit_stats.merge!(:date => commit.date)
+      commit_stats = {:date => commit.date}
       commits.merge!(sha1.to_sym => commit_stats)
     end
     commits

@@ -6,8 +6,7 @@ class CommitGraph
 
   initializeD3: ->
     # set up SVG for D3
-    @width = $("#commits-display").width();
-    @height = $("#commits-display").height();
+    @width = @height = $("#commits-display").width()
     tcolors = d3.scale.category10()
     @body = d3.select("body")
 
@@ -18,10 +17,10 @@ class CommitGraph
 
     @force = d3.layout.force().on("tick", @tick).charge((d) ->
       #(if d._children then -d.size / 100 else -40)
-      -500
+      -400
     ).linkDistance((d) ->
-      (if d.target._children then 50 else 25)
-      #30
+      # (if d.target._children then 50 else 25)
+      30
     ).size([@height, @width])
     @mouseover = false
     @drag_in_progress = false
@@ -53,7 +52,7 @@ class CommitGraph
     @diff_tree.fixed = true
     @diff_tree.root = true
     @diff_tree.x = @width / 2
-    @diff_tree.y = @height / 2
+    @diff_tree.y = window.innerHeight / 2
     @diff_tree.name = @branch_name
 
     @link = @svg.append('svg:g').selectAll('path')
@@ -70,7 +69,7 @@ class CommitGraph
     # @svg.selectAll("text").remove()
 
     # Restart the force layout
-    @force.gravity(Math.atan(@total / 50) / Math.PI * 0.4)
+    @force.gravity(0.1)
       .nodes(@nodes)
       .links(@links)
     
@@ -241,7 +240,6 @@ class CommitGraph
 
     @node.attr "transform", (d) ->
       "translate(" + d.x + "," + d.y + ")"
-
 
   clear_filters : () ->
 
