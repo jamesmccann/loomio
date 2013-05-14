@@ -443,6 +443,7 @@ DEPENDENCIES
   exception_notification (~> 2.6.1)
   factory_girl_rails (~> 4.0)
   faker (~> 1.0.1)
+  fastercsv
   fog
   foreman (~> 0.60.2)
   formtastic

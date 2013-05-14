@@ -1,5 +1,6 @@
 class Visualisation
   require 'grit'
+  require 'csv'
 
   attr_accessor :repo
 
@@ -111,21 +112,39 @@ class Visualisation
   end
 
   def commits_for_branch(branch_name)
-    commits = {}
-    #default returned is 15
-    @repo.commits(branch_name, 15).each do |commit|
-      sha1 = commit.id
-      commit_stats = {:date => commit.date}
-      commits.merge!(sha1.to_sym => commit_stats)
+    commits = []
+    raw_log = `git log  master..#{branch_name} --max-count 15 --date=short --pretty="%H, %an, %ad, %s"`
+    commit_lines = CSV.parse(raw_log)
+    i = 1
+    last_date = nil
+    commit_lines.each_with_index do |commit, id|
+      sha1 = commit[0]
+      author = commit[1].strip!
+      commit_date = commit[2].strip!
+      message = commit.slice(3..commit.length-1).join(",").strip!
+      if !last_date.nil? && commit_date.to_date == last_date.to_date
+        i += 1
+      else
+        i = 1
+      end
+      last_date = commit_date
+      commit_stats = {:id => id, :date => commit_date, :num => i, :sha => sha1, 
+                      :author => author, :message => message}
+      commits << commit_stats
+      puts commits
     end
     commits
   end
 
-  def diff_file_stats(commit_sha)
-    puts commit_sha
-    merge_base_commit = `git merge-base master #{commit_sha}`.gsub("/\n/", '').strip!
+  def merge_base_file_stats(branch_name)
+    merge_base_commit = `git merge-base master #{branch_name}`.gsub("/\n/", '').strip!
     `git diff --numstat #{merge_base_commit}`
   end
+
+  def commit_diff_stats(commit_sha)
+    `git show #{commit_sha} --numstat --pretty="%n"`.strip!
+  end
+
 
   def branch_diff_commit_files(commit_sha = nil)
     merge_base_commit = `git merge-base master #{commit_sha}`.gsub("/\n/", '').strip!

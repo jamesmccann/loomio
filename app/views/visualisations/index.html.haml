@@ -1,6 +1,3 @@
-#sidebar-commits.sidebar{:style => "display: none"}
-  %h3{:id => "branch_name"}  
-  =link_to "Back to branches", "#", :id => "back-to-branches-link"
 #sidebar-branches.sidebar
   %h1 Branches 
   #branches-controls
@@ -15,5 +12,13 @@
   #vis-loading
     %h4 Loading Repository Data...
     =image_tag "visualisations/ajax-loader.gif"
-#commits-display
 #commits-toolbar{:style => "display: none"}
+  #title-bar.clearfix
+    %h3{:id => "branch_name"}  
+    =link_to "Back to branches", "#", :id => "back-to-branches-link"
+  #commit-details
+    %h4{:id => "commit_sha"}
+    %p{:id => "commit_author"}
+    %p{:id => "commit_message"}
+  #history-graph
+#commits-display

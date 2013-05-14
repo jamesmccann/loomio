@@ -96,7 +96,7 @@ class VisualisationsController < ApplicationController
     commits = @visualisation.commits_for_branch(ref)
 
     respond_to do |format|
-      format.json { render :json => commits.to_json }
+      format.json { render :json => commits }
     end
   end
 
@@ -104,11 +104,21 @@ class VisualisationsController < ApplicationController
     @visualisation = Visualisation.new
     ref = params[:ref]
 
-    diff_stats = @visualisation.diff_file_stats(ref)
+    diff_stats = @visualisation.merge_base_file_stats(ref)
 
     respond_to do |format|
       format.json { render :json => diff_stats.to_json }
     end    
   end
 
+  def commit_diff_stats
+    @visualisation = Visualisation.new
+    ref = params[:ref]
+
+    diff_stats = @visualisation.commit_diff_stats(ref)
+
+    respond_to do |format|
+      format.json { render :json => diff_stats.to_json }
+    end     
+  end
 end

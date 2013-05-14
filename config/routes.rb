@@ -10,6 +10,7 @@ Loomio::Application.routes.draw do
     get :branches_commit_filters, :on => :collection, :format => :json, :via => :get
     get :commits, :on => :collection, :format => :json, :via => :get
     get :diff_stats, :on => :collection, :format => :json, :via => :get
+    get :commit_diff_stats, :on => :collection, :format => :json, :via => :get
   end
 
   resources :group_requests, only: [:create, :new] do

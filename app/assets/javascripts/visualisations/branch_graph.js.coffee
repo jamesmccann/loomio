@@ -56,7 +56,7 @@ class BranchGraph
     @nodes.push
       id: 0
       branch: @master
-      size: 1.0
+      size: 5.0
       reflexive: false
       fixed: true
       x: @width / 2
@@ -243,6 +243,10 @@ class BranchGraph
       (if (d is @selected_node) then d3.rgb(branch_color(d)).brighter().toString() else d3.rgb(branch_color(d)))
     ).classed "reflexive", (d) ->
       d.reflexive
+
+    @circle.selectAll("text")
+      .attr("x", (d) -> node_size(d)+5)
+      .attr("y", (d) -> node_size(d)/2)
     
     # add new nodes
     g = @circle.enter().append("svg:g")
@@ -278,8 +282,11 @@ class BranchGraph
         .call(@force.drag())
     
     # show node IDs
-    g.append("svg:text").attr("x", 30).attr("y", 4).attr("class", "name").text (d) ->
-      d.branch.name + " " + d.branch.diff.add + " / " + d.branch.diff.del
+    g.append("svg:text")
+      .attr("x", (d) -> node_size(d)+5)
+      .attr("y", (d) -> node_size(d)/2)
+      .attr("class", "name").text (d) ->
+        d.branch.name + " " + d.branch.diff.add + " / " + d.branch.diff.del
     
     # remove old nodes
     @circle.exit().remove()
@@ -379,9 +386,11 @@ class BranchGraph
     return "#9CDECD" if node.branch.merged_with_master
     #color based on additions and deletions
     branch_diff = node.branch.diff.add - node.branch.diff.del
-    if branch_diff > 0
+    if branch_diff > 100
       "#6ACD72"
-    else if branch_diff <= 0
+    else if branch_diff > 0 && branch_diff <= 100
+      "#FFF48F"
+    else
       "#C3554B"
 
   node_size = (node_data) ->
