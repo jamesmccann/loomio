@@ -34,4 +34,5 @@
 //= require votes
 //= require jquery.atwho
 //= require pop-over
+//= require moment
 //= require namespace

@@ -251,6 +251,8 @@ GEM
     method_source (0.8.1)
     mime-types (1.21)
     modernizr-rails (2.6.2)
+    momentjs-rails (2.0.0.1)
+      railties (>= 3.1)
     multi_json (1.7.2)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
@@ -466,6 +468,7 @@ DEPENDENCIES
   mailcatcher (~> 0.5.8)
   meta_request (~> 0.2.1)
   modernizr-rails (~> 2.6.2)
+  momentjs-rails
   newrelic_rpm (~> 3.5.7.59)
   nokogiri (~> 1.5.9)
   paper_trail (~> 2.6.3)

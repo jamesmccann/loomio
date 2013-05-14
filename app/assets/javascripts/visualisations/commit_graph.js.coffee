@@ -333,7 +333,8 @@ class CommitGraph
       .on("click", (d) ->
         vis.history_svg.selectAll("circle").filter((d2) -> d != d2).transition().style "fill", "#1F77B4"
         d3.select(this).transition().style "fill", "#6ACD72"
-        $("#commit_sha").text(d.sha)
+        $("#commit_sha").text("Viewing commit: " + d.sha)
+        $("#commit_author").text("Made by: " + d.author + ", on " + moment(getDate(d)).format("dddd MMMM Do YYYY"))
         $("#commit_message").text(d.message)
         vis.filter_commit(d.sha)
       )
