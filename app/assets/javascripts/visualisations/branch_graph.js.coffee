@@ -1,6 +1,6 @@
 class BranchGraph 
   constructor: ->
-    new Visualisation.CommitGraph("git-vis-2")
+    new Visualisation.CommitGraph("feature/filter-search")
     # @initializeD3()
     # @getGraphData()
     # @initializeControls()

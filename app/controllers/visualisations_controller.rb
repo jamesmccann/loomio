@@ -78,16 +78,6 @@ class VisualisationsController < ApplicationController
     end
   end
 
-  def branches_excluding_commit
-    @visualisation = Visualisation.new
-    commit_sha = params[:data][:commit]
-    branch_names = @visualisation.branches_excluding_commit(commit_sha)
-
-    respond_to do |format|
-      format.json { render :json => branch_names.to_json }
-    end
-  end
-
   def commits
     @visualisation = Visualisation.new
     ref = params[:ref]

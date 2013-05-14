@@ -68,6 +68,8 @@ body,html { height: 100%; margin: 0px; }
     padding-left: 15px;
     padding-top: 5px;
     float: left;
+
+    p.small { font-size: 12px; }
   }
   
   #history-graph {
@@ -75,6 +77,12 @@ body,html { height: 100%; margin: 0px; }
     height: 150px;
     float: right;
     margin-right: 35px;
+
+    #clear_history_filters {
+      position: absolute;
+      top: 15px;
+      right: 40px;
+    }
 
     svg {
       margin-top: 20px;

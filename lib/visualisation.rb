@@ -137,12 +137,14 @@ class Visualisation
   end
 
   def merge_base_file_stats(branch_name)
-    merge_base_commit = `git merge-base master #{branch_name}`.gsub("/\n/", '').strip!
-    `git diff --numstat #{merge_base_commit}`
+    #commits_list = `git cherry master #{branch_name}`.split("\n").each { |b| b.gsub!(/[+]?/, '') }
+    # merge_base_commit = `git merge-base master #{branch_name}`.gsub("/\n/", '').strip!
+    # `git diff --numstat #{merge_base_commit}`
+    `git log master..#{branch_name} --numstat --no-merges --format="%n"`
   end
 
   def commit_diff_stats(commit_sha)
-    `git show #{commit_sha} --numstat --pretty="%n"`.strip!
+    `git show #{commit_sha} --numstat --no-merges --pretty="%n"`.strip!
   end
 
 

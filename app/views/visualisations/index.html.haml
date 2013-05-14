@@ -17,7 +17,10 @@
     %h3{:id => "branch_name"}  
     =link_to "Back to branches", "#", :id => "back-to-branches-link"
     %p{:id => "commit_sha"}
-    %p{:id => "commit_author"}
-    %p{:id => "commit_message"}
+    %p{:class => "small"}
+      %span{:id => "commit_author"}
+      %br
+      %span{:id => "commit_message"}
   #history-graph
+    %a{:id => "clear_history_filters", :href => '#'} Clear filter
 #commits-display
