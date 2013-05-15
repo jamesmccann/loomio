@@ -1,9 +1,12 @@
 class CommitGraph 
-  constructor: (@branch_name) ->
+  constructor: () ->
     @initializeControls()
+    
+  load: (@branch_name) ->
     @initializeD3()
     @getGraphData()
-    @getHistData()
+    @getHistData()    
+    @loadUI()
 
   initializeD3: ->
     # set up SVG for D3
@@ -36,16 +39,32 @@ class CommitGraph
     $.get "/visualisations/commits.json", {ref: @branch_name}, (history_data) ->
       vis.initHistoryGraph(history_data) 
 
-  initializeControls: ->
+  loadUI: ->
     Visualisation.hideBranchesGraph()
     Visualisation.showCommitsGraph()
     Visualisation.hideBranchesSidebar(Visualisation.showCommitsToolbar)
     $("#branch_name").text("Commits for " + @branch_name)
+    $("#commit_sha").text('')
+    $("#commit_author").text('')
+    $("#commit_message").text('')
+    if @branch_name.length > 40
+      $("#branch_name").css("font-size": "18px")
+    if @branch_name.length > 60
+      $("#branch_name").css("font-size": "15px")
 
+  initializeControls: ->
     vis = @
     $("#clear_history_filters").click (event) ->
       event.preventDefault()
       vis.clear_filter()
+
+    $("#back-to-branches-btn").click (event) ->
+      event.preventDefault()
+      vis.svg.remove()
+      vis.history_svg.remove()
+      Visualisation.hideCommitsGraph()
+      Visualisation.showBranchesGraph()
+      Visualisation.hideCommitsToolbar(Visualisation.showBranchesSidebar)
 
   initializeGraphData: (diff_stats) ->
     @diff_stats = diff_stats
@@ -123,7 +142,7 @@ class CommitGraph
 
     # Enter any new nodes
     g = @node.enter().append("svg:g")
-    g.attr("id", (d) -> d.name.replace(/[.\/]/g, '-'))
+    g.attr("id", (d) -> nodeId(d.name))
      .attr("class", "node_group")
      .append("svg:circle")
       .attr("class", "node")
@@ -283,7 +302,7 @@ class CommitGraph
     xAxis = d3.svg.axis()
                   .scale(x_scale)
                   .orient('bottom')
-                  .ticks(7)
+                  .ticks(5)
                   .tickFormat(d3.time.format('%b %y'))
                   .tickSize(1)
 
@@ -364,7 +383,7 @@ class CommitGraph
       vis.filter_commit_nodes(history_data)
 
   filter_commit_nodes: (commit_stats) ->
-    return if !commit_stats
+    return if commit_stats == null
     filter_nodes = @flatten(Visualisation.convertDiffStatsToTree(commit_stats))
     vis = @
     # filter out all nodes
@@ -374,10 +393,9 @@ class CommitGraph
 
     filtered_names = $.map(filter_nodes, (node) -> 
       return if !node.name
-      node.name.replace(/[.\/]/g, '-'))
-    filtered_names.push(@branch_name.replace(/[.\/]/g, '-'))
-
-    console.log filtered_names
+      nodeId(node.name)
+    )
+    filtered_names.push(nodeId(@branch_name))
 
     $.each filtered_names, (i, id_name) ->
       return if $("#" + id_name) == []
@@ -386,8 +404,8 @@ class CommitGraph
       dom_node.select('text').transition().style "opacity", "1"
 
     vis.svg.selectAll('path').filter((d) -> 
-      source_name = d.source.name.replace(/[.\/]/g, '-')
-      target_name = d.target.name.replace(/[.\/]/g, '-')
+      source_name = nodeId(d.source.name)
+      target_name = nodeId(d.target.name)
       return true if ($.inArray(source_name, filtered_names) > -1 && $.inArray(target_name, filtered_names) > -1)
       false
     ).transition().style "opacity", "1"
@@ -416,6 +434,9 @@ class CommitGraph
 
   getDate = (d) ->
     new Date(d.date)
+
+  nodeId = (name) ->
+    "node_" + name.replace(/[.\/]/g, '-')
 
 
 Visualisation.CommitGraph = CommitGraph

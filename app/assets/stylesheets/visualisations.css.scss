@@ -91,6 +91,7 @@ body,html { height: 100%; margin: 0px; }
 
     .axis .tick text { fill: #555; }
     .axis path.domain { fill: #555; }
+    .axis line { fill: none; stroke: black; shape-rendering: crispEdges; }
   }
 }
 

@@ -1,9 +1,10 @@
 class BranchGraph 
   constructor: ->
-    new Visualisation.CommitGraph("feature/filter-search")
-    # @initializeD3()
-    # @getGraphData()
-    # @initializeControls()
+    # new Visualisation.CommitGraph("feature/filter-search")
+    @initializeD3()
+    @getGraphData()
+    @initializeControls()
+    @commitGraph=  new Visualisation.CommitGraph()
 
   initializeD3: ->
     # set up SVG for D3
@@ -279,7 +280,10 @@ class BranchGraph
           return false if d2 is undefined
           return true if d2.source == vis.mousedown_node || d2.target == vis.mousedown_node
         ).transition().style "opacity", "1")
-        .call(@force.drag())
+      .on("dblclick", (d) ->
+        vis.commitGraph.load(d.branch.name) 
+      )
+      .call(@force.drag())
     
     # show node IDs
     g.append("svg:text")
@@ -326,6 +330,7 @@ class BranchGraph
       @restart()
 
   dom_node: (data) ->
+    return if !data.branch
     $("circle[branch=" + "'#{data.branch.name}'" + "]")
 
   filter_merged_with_master: () ->

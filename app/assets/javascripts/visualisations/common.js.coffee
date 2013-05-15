@@ -29,11 +29,15 @@ Visualisation.hideCommitsGraph = () ->
 Visualisation.showCommitsToolbar = () ->
   $("#commits-toolbar").show()
   ht = $("#commits-toolbar").outerHeight() 
-  $("#commits-toolbar").css("bottom": "#{-ht}px").animate({bottom: "0px"}, 1000)
+  $("#commits-toolbar").css("bottom": "#{-ht}px").animate({bottom: "0px"}, 500).css("display": "block")
 
 Visualisation.hideCommitsToolbar = (callback) ->
   ht = $("#commits-toolbar").outerHeight() 
-  $("#commits-toolbar").css("position": "absolute").animate({bottom: -ht}, 1000, callback)
+  $("#commits-toolbar").css("top": "auto")
+  $("#commits-toolbar").animate({bottom: -ht}, 500, ->
+    $(this).css("display": "none")
+    callback.call()
+  )
 
 hideSidebar = (sidebar, callback) ->
   wd = sidebar.outerWidth()
@@ -41,5 +45,6 @@ hideSidebar = (sidebar, callback) ->
   sidebar.animate({ left: -wd } , 500, callback)
 
 showSidebar = (sidebar) ->
-  sidebar.css("position": "fixed", "display": "block")
+  wd = sidebar.outerWidth()
+  sidebar.css("position": "fixed", "display": "block", "left": "#{-wd}px")
   sidebar.animate({ left: "0px"}, 500)

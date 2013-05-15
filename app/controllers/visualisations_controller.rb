@@ -65,6 +65,7 @@ class VisualisationsController < ApplicationController
 
     branches_include = @visualisation.branches_containing_commit(include_commit_sha) if include_commit_sha.present?
     branches_exclude = @visualisation.branches_excluding_commit(exclude_commit_sha) if exclude_commit_sha.present?
+    puts branches_include
     puts branches_exclude
 
     if !branches_include.empty? 

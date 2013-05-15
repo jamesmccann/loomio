@@ -46,16 +46,15 @@ class Visualisation
     `git branch --contains #{commit_sha}`.split("\n").each {|b| b.gsub!(/[*]?\s/, '')}.include?(branch)
   end
 
-  def branches_containing_commit(commit_sha, remotes = false)
-    puts "git branch -a --contains #{commit_sha}"
+  def branches_containing_commit(commit_sha, remotes = true)
     if remotes 
-      return `git branch -a --contains #{commit_sha}`.split("\n").each { |b| b.gsub!(/[*]?\s/, '') }
+      return `git branch -a --contains #{commit_sha}`.split("\n").each { |b| b.gsub!(/[*]?\s/, '') and b.gsub!(/remotes\//, '') }
     else 
       return `git branch --contains #{commit_sha}`.split("\n").each { |b| b.gsub!(/[*]?\s/, '') }
     end
   end
 
-  def branches_excluding_commit(commit_sha, remotes = false)
+  def branches_excluding_commit(commit_sha, remotes = true)
     if remotes
       return branches - `git branch --contains #{commit_sha}`.split("\n").each { |b| b.gsub!(/[*]?\s/, '') }
     else
