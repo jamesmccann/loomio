@@ -6,7 +6,6 @@ class CommitGraph
     @initializeD3()
     @getGraphData()
     @getHistData()    
-    @getAuthorData()
     @loadUI()
 
   initializeD3: ->
@@ -39,12 +38,6 @@ class CommitGraph
     vis = @
     $.get "/visualisations/commits.json", {ref: @branch_name}, (history_data) ->
       vis.initHistoryGraph(history_data) 
-
-  getAuthorData: ->
-    vis = @
-    $.get "/visualisations/author_file_stats.json", {ref: @branch_name}, (author_data) ->
-      console.log "here"
-      Visualisation.convertAuthorStatsToTree(author_data)
 
   loadUI: ->
     Visualisation.hideBranchesGraph()
