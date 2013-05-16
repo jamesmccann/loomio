@@ -1,0 +1,193 @@
+James McCann jmccnz@gmail.com
+
+10	5	app/assets/javascripts/visualisations/branch_graph.js.coffee
+33	12	app/assets/javascripts/visualisations/commit_graph.js.coffee
+8	3	app/assets/javascripts/visualisations/common.js.coffee
+1	0	app/assets/stylesheets/visualisations.css.scss
+1	0	app/controllers/visualisations_controller.rb
+1	1	app/views/visualisations/index.html.haml
+3	4	lib/visualisation.rb
+James McCann jmccnz@gmail.com
+
+1	1	app/assets/javascripts/visualisations/branch_graph.js.coffee
+25	11	app/assets/javascripts/visualisations/commit_graph.js.coffee
+8	0	app/assets/stylesheets/visualisations.css.scss
+0	10	app/controllers/visualisations_controller.rb
+5	2	app/views/visualisations/index.html.haml
+5	3	lib/visualisation.rb
+James McCann jmccnz@gmail.com
+
+1	0	Gemfile
+3	0	Gemfile.lock
+1	0	app/assets/javascripts/application.js
+2	1	app/assets/javascripts/visualisations/commit_graph.js.coffee
+1	2	app/assets/stylesheets/visualisations.css.scss
+2	3	app/views/visualisations/index.html.haml
+James McCann jmccnz@gmail.com
+
+1	0	Gemfile
+1	0	Gemfile.lock
+14	5	app/assets/javascripts/visualisations/branch_graph.js.coffee
+170	33	app/assets/javascripts/visualisations/commit_graph.js.coffee
+28	9	app/assets/stylesheets/visualisations.css.scss
+12	2	app/controllers/visualisations_controller.rb
+9	4	app/views/visualisations/index.html.haml
+1	0	config/routes.rb
+28	9	lib/visualisation.rb
+James McCann jmccnz@gmail.com
+
+6	8	app/assets/javascripts/visualisations/commit_graph.js.coffee
+2	1	app/assets/stylesheets/visualisations.css.scss
+2	2	app/controllers/visualisations_controller.rb
+1	0	config/routes.rb
+3	4	lib/visualisation.rb
+James McCann jmccnz@gmail.com
+
+1	0	app/assets/javascripts/namespace.js.coffee
+2	1	app/assets/javascripts/visualisations.js
+4	19	app/assets/javascripts/visualisations/branch_graph.js.coffee
+99	41	app/assets/javascripts/visualisations/commit_graph.js.coffee
+45	0	app/assets/javascripts/visualisations/common.js.coffee
+31	7	app/assets/stylesheets/visualisations.css.scss
+15	9	app/views/visualisations/index.html.haml
+4	2	lib/visualisation.rb
+James McCann jmccnz@gmail.com
+
+1	1	app/assets/javascripts/namespace.js.coffee
+3	1	app/assets/javascripts/visualisations.js
+21	26	app/assets/javascripts/visualisations/branch_graph.js.coffee
+213	0	app/assets/javascripts/visualisations/commit_graph.js.coffee
+57	0	app/assets/javascripts/visualisations/data_convert.js.coffee
+1	1	app/assets/stylesheets/visualisations.css.scss
+22	0	app/controllers/visualisations_controller.rb
+1	0	config/routes.rb
+3	2	db/schema.rb
+32	1	lib/visualisation.rb
+James McCann jmccnz@gmail.com
+James McCann jmccnz@gmail.com
+
+32	75	app/assets/javascripts/visualisations/branch_graph.js.coffee
+James McCann jmccnz@gmail.com
+
+42	7	app/assets/javascripts/visualisations/branch_graph.js.coffee
+1	1	app/assets/stylesheets/application.css
+2	0	app/assets/stylesheets/visualisations.css.scss
+33	0	app/controllers/visualisations_controller.rb
+4	2	app/views/visualisations/index.html.haml
+1	0	config/routes.rb
+15	2	lib/visualisation.rb
+James McCann jmccnz@gmail.com
+
+-	-	app/assets/images/visualisations/ajax-loader.gif
+69	12	app/assets/javascripts/visualisations/branch_graph.js.coffee
+40	4	app/assets/stylesheets/visualisations.css.scss
+1	1	app/controllers/visualisations_controller.rb
+10	2	app/views/visualisations/index.html.haml
+James McCann jmccnz@gmail.com
+
+12	8	app/assets/javascripts/visualisations/branch_graph.js.coffee
+1	0	app/assets/stylesheets/application.css
+16	0	app/assets/stylesheets/lib/flat_ui/_config.sass
+91	0	app/assets/stylesheets/lib/flat_ui/_icon-font-24.sass
+91	0	app/assets/stylesheets/lib/flat_ui/_icon-font.sass
+96	0	app/assets/stylesheets/lib/flat_ui/_mixins.sass
+129	0	app/assets/stylesheets/lib/flat_ui/_spaces.sass
+39	0	app/assets/stylesheets/lib/flat_ui/flat-ui.sass
+73	0	app/assets/stylesheets/lib/flat_ui/modules/_btn.sass
+86	0	app/assets/stylesheets/lib/flat_ui/modules/_checkbox-and-radio.sass
+228	0	app/assets/stylesheets/lib/flat_ui/modules/_demo.sass
+57	0	app/assets/stylesheets/lib/flat_ui/modules/_footer.sass
+66	0	app/assets/stylesheets/lib/flat_ui/modules/_input.sass
+95	0	app/assets/stylesheets/lib/flat_ui/modules/_login.sass
+152	0	app/assets/stylesheets/lib/flat_ui/modules/_navbar.sass
+56	0	app/assets/stylesheets/lib/flat_ui/modules/_pager.sass
+75	0	app/assets/stylesheets/lib/flat_ui/modules/_pagination.sass
+88	0	app/assets/stylesheets/lib/flat_ui/modules/_palette.sass
+29	0	app/assets/stylesheets/lib/flat_ui/modules/_progress.sass
+163	0	app/assets/stylesheets/lib/flat_ui/modules/_select.sass
+34	0	app/assets/stylesheets/lib/flat_ui/modules/_share.sass
+91	0	app/assets/stylesheets/lib/flat_ui/modules/_tagsinput.sass
+42	0	app/assets/stylesheets/lib/flat_ui/modules/_tile.sass
+77	0	app/assets/stylesheets/lib/flat_ui/modules/_todo.sass
+85	0	app/assets/stylesheets/lib/flat_ui/modules/_toggle.sass
+45	0	app/assets/stylesheets/lib/flat_ui/modules/_tooltip.sass
+43	0	app/assets/stylesheets/lib/flat_ui/modules/_type.sass
+44	0	app/assets/stylesheets/lib/flat_ui/modules/_ui-slider.sass
+358	0	app/assets/stylesheets/lib/flat_ui/modules/_video.sass
+14	0	app/assets/stylesheets/visualisations.css.scss
+17	6	app/controllers/visualisations_controller.rb
+16	0	app/views/layouts/visualisation.html.haml
+2	1	app/views/visualisations/index.html.haml
+1	0	config/routes.rb
+29	13	lib/visualisation.rb
+James McCann jmccnz@gmail.com
+
+3	3	app/assets/javascripts/visualisations/branch_graph.js.coffee
+1	1	app/controllers/visualisations_controller.rb
+27	1	lib/visualisation.rb
+James McCann jmccnz@gmail.com
+
+1	0	app/assets/javascripts/application.js
+1	0	app/assets/javascripts/namespace.js.coffee
+381	0	app/assets/javascripts/visualisations/branch_graph.js.coffee
+0	372	app/assets/javascripts/visualisations/index.js
+1	1	app/assets/stylesheets/visualisations.css.scss
+1	1	app/controllers/visualisations_controller.rb
+James McCann jmccnz@gmail.com
+
+0	1	app/assets/javascripts/visualisations/index.js
+3	1	app/controllers/visualisations_controller.rb
+5	1	lib/visualisation.rb
+James McCann jmccnz@gmail.com
+
+21	11	app/assets/javascripts/visualisations/index.js
+6	8	app/controllers/visualisations_controller.rb
+2	2	lib/visualisation.rb
+James McCann jmccnz@gmail.com
+
+20	16	app/assets/javascripts/visualisations/index.js
+22	0	app/controllers/visualisations_controller.rb
+1	0	config/routes.rb
+21	0	lib/visualisation.rb
+James McCann jmccnz@gmail.com
+
+1	1	Gemfile
+3	3	Gemfile.lock
+0	1	app/assets/javascripts/application.js
+2	0	app/assets/javascripts/visualisations.js
+359	0	app/assets/javascripts/visualisations/index.js
+1	0	app/assets/stylesheets/application.css
+56	0	app/assets/stylesheets/visualisations.css.scss
+0	3	app/controllers/discussions_controller.rb
+0	7	app/controllers/visualisation_controller.rb
+26	0	app/controllers/visualisations_controller.rb
+0	2	app/helpers/visualisation_helper.rb
+2	0	app/helpers/visualisations_helper.rb
+1	0	app/views/layouts/application.html.haml
+2	0	app/views/visualisations/index.html.haml
+1	0	config/application.rb
+1	1	config/routes.rb
+4	6	lib/visualisation.rb
+James McCann jmccnz@gmail.com
+
+7	0	app/controllers/visualisation_controller.rb
+0	2	app/controllers/visualisation_controller_controller.rb
+0	2	app/helpers/visualisation_controller_helper.rb
+2	0	app/helpers/visualisation_helper.rb
+4	0	config/routes.rb
+James McCann jmccnz@gmail.com
+
+2	0	app/controllers/visualisation_controller_controller.rb
+2	0	app/helpers/visualisation_controller_helper.rb
+7	19	lib/visualisation.rb
+0	3452	test.txt
+James McCann jmccnz@gmail.com
+
+3	0	Gemfile
+9	0	Gemfile.lock
+1	0	app/assets/javascripts/application.js
+3	0	app/controllers/discussions_controller.rb
+44	44	db/schema.rb
+46	0	lib/visualisation.rb
+9	0	lib/visualisation/branch_statistics.rb
+3452	0	test.txt

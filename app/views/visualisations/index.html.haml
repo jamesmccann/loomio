@@ -4,6 +4,10 @@
     = label_tag :filter_merged do
       = check_box_tag :filter_merged, "1", false, :id => "filter_merged_checkbox"
       Filter merged with master
+    %br
+    = label_tag :filter_remotes do
+      = check_box_tag :filter_remotes, "1", false, :id => "filter_remotes_checkbox"
+      Filter remote branches
     =text_field_tag :filter_names, "", :placeholder => "Filter branch names", :id => "filter_names_input"
     =text_field_tag :show_commit, "", :placeholder => "Show commit", :id => "show_commit_input", :class => "commit_filters_input"
     =text_field_tag :exclude_commit, "", :placeholder => "Exclude commit", :id => "exclude_commit_input", :class => "commit_filters_input"

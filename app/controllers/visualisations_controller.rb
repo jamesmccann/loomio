@@ -11,14 +11,16 @@ class VisualisationsController < ApplicationController
     @visualisation = Visualisation.new
     branches = [] 
     total_additions = total_deletions = 0
+    remotes = @visualisation.remotes
     @visualisation.branches.each do |branch|
       diff = @visualisation.branch_diff_size(branch)
       head_commit = @visualisation.head_commit_sha(branch)
       merged_with_master = @visualisation.branch_contains_commit("master", head_commit)
       total_additions += diff.first
       total_deletions += diff.last
+      remote = remotes.include?(branch)
       branches << {:name => branch, :diff => {:add => diff.first, :del => diff.last}, 
-                    :merged_with_master => merged_with_master, :hidden => false}
+                    :merged_with_master => merged_with_master, :hidden => false, :remote => remote}
     end
 
     result = {:branches => branches, :diff => {:add => total_additions, :del => total_deletions}}
@@ -95,10 +97,10 @@ class VisualisationsController < ApplicationController
     @visualisation = Visualisation.new
     ref = params[:ref]
 
-    diff_stats = @visualisation.merge_base_file_stats(ref)
+    file_diff_stats = @visualisation.merge_base_file_stats(ref)
 
     respond_to do |format|
-      format.json { render :json => diff_stats.to_json }
+      format.json { render :json => file_diff_stats.to_json }
     end    
   end
 
@@ -106,10 +108,22 @@ class VisualisationsController < ApplicationController
     @visualisation = Visualisation.new
     ref = params[:ref]
 
-    diff_stats = @visualisation.commit_diff_stats(ref)
+    commit_diff_stats = @visualisation.commit_diff_stats(ref)
 
     respond_to do |format|
-      format.json { render :json => diff_stats.to_json }
+      format.json { render :json => commit_diff_stats.to_json }
+    end     
+  end
+
+  def author_file_stats
+    @visualisation = Visualisation.new
+    ref = params[:ref]
+
+    author_stats = @visualisation.branch_author_file_stats(ref)
+    puts author_stats
+
+    respond_to do |format|
+      format.json { render :json => author_stats.to_json }
     end     
   end
 end

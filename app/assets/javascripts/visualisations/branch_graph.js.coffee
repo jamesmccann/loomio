@@ -1,10 +1,10 @@
 class BranchGraph 
   constructor: ->
-    # new Visualisation.CommitGraph("feature/filter-search")
-    @initializeD3()
-    @getGraphData()
-    @initializeControls()
-    @commitGraph=  new Visualisation.CommitGraph()
+    # @initializeD3()
+    # @getGraphData()
+    # @initializeControls()
+    @commitGraph =  new Visualisation.CommitGraph()
+    @commitGraph.load("git-vis-2")
 
   initializeD3: ->
     # set up SVG for D3
@@ -81,9 +81,6 @@ class BranchGraph
             left: merged_branch.left
             right: merged_branch.right
             hidden: false
-
-    console.log("links")
-    console.log(@links)
 
     #store original state
     @all_nodes = @nodes
@@ -311,6 +308,10 @@ class BranchGraph
     if $("#filter_merged_checkbox").is(":checked")
       @filter_merged_with_master()
 
+    #filter branches merged with master
+    if $("#filter_remotes_checkbox").is(":checked")
+      @filter_remotes()
+
     #filter branches by name
     filter_name_query = $("#filter_names_input").val()
     @filter_branch_names(filter_name_query) if filter_name_query.length > 0
@@ -349,10 +350,25 @@ class BranchGraph
         return false
       true
 
-  filter_branch_names: (query) ->
-    console.log("filtering branch names " + query)
+  filter_remotes: () ->
     @nodes = $.grep @nodes, (node, i) =>
-      if node.branch.name.lastIndexOf(query, 0) isnt 0 
+      if node.branch.remote is true
+        return true if node.branch.name == "master"
+        @links = $.grep @links, (link, i) ->
+          return false if link.source == node or link.target == node
+          true
+        @branches = $.grep @branches, (branch, i) ->
+          return false if branch == node.branch
+          true
+        @branch_names = $.grep @branch_names, (name, i) ->
+          return false if name == node.branch.name
+          true
+        return false
+      true
+
+  filter_branch_names: (query) ->
+    @nodes = $.grep @nodes, (node, i) =>
+      if node.branch.name.indexOf(query) == -1
         return true if node.branch.name == "master"
         @links = $.grep @links, (link, i) ->
           return false if link.source == node or link.target == node

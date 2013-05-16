@@ -21,6 +21,10 @@ class Visualisation
     @repo.heads
   end
 
+  def remotes
+    `git branch -r`.split("\n").each { |b| b.gsub!(/[*]?\s/, '') }
+  end
+
   def number_of_branches
     @repo.heads.size
   end
@@ -159,6 +163,10 @@ class Visualisation
       files.merge!(cols[2].to_sym => { :add => additions, :del => deletions })
     end
     files.merge!(:total => { :add => additions, :del => deletions })
+  end
+
+  def branch_author_file_stats(branch)
+    `git log master..#{branch} --numstat --format="%an %ae"`.strip!
   end
 
 end
