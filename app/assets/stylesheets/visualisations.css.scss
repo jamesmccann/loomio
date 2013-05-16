@@ -14,7 +14,7 @@ body,html { height: 100%; margin: 0px; }
 
 #sidebar-branches {
   background-color: #EFEFEF;
-  border-left: solid 1px #DDD;
+  border-right: solid 1px #DDD;
   height: 900px;
 
   input { width: auto; }
@@ -31,6 +31,22 @@ body,html { height: 100%; margin: 0px; }
     padding-right: 20px;
     margin-right: 15px;
     margin-top: 20px;   
+  }
+
+  #authors-list {
+    padding: 10px; 
+
+    p { 
+      -webkit-margin-before: 0em;
+      -webkit-margin-after: 0em;
+    }
+
+    .author-row { clear: both; padding: 5px; display: block; margin-bottom: 10px; min-height: 48px; }
+
+    .author-gravatar { float: left; margin-right: 15px; border: solid 1px #DDD; }
+    .author-details { float: left; }
+    .author-email { color: #999; text-decoration: underline; }
+    .author-commits { float: left; }
   }
 }
 
@@ -49,7 +65,7 @@ body,html { height: 100%; margin: 0px; }
 }
 
 #commits-display { 
-  width: 960px; 
+  width: 100%;
   height: 700px;
   margin-left: auto;
   margin-right: auto;

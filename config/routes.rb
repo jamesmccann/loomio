@@ -11,7 +11,7 @@ Loomio::Application.routes.draw do
     get :commits, :on => :collection, :format => :json, :via => :get
     get :diff_stats, :on => :collection, :format => :json, :via => :get
     get :commit_diff_stats, :on => :collection, :format => :json, :via => :get
-    get :author_file_stats, :on => :collection, :format => :json, :via => :get
+    get :author_stats, :on => :collection, :via => :get
   end
 
   resources :group_requests, only: [:create, :new] do

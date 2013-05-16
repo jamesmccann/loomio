@@ -1,10 +1,10 @@
 class BranchGraph 
   constructor: ->
-    # @initializeD3()
-    # @getGraphData()
-    # @initializeControls()
+    @initializeD3()
+    @getGraphData()
+    @initializeControls()
     @commitGraph =  new Visualisation.CommitGraph()
-    @commitGraph.load("git-vis-2")
+    # @commitGraph.load("git-vis-2")
 
   initializeD3: ->
     # set up SVG for D3
@@ -144,10 +144,6 @@ class BranchGraph
     @mousedown_node = null
     @mouseup_node = null
 
-    @svg.on('mousedown', @mousedown)
-      .on('mousemove', @mousemove)
-      .on('mouseup', @mouseup)
-
     #remove the loading div here
     $("#vis-loading").hide();
     @restart()
@@ -176,29 +172,6 @@ class BranchGraph
 
     Visualisation.branchGraph.circle.attr "transform", (d) ->
       "translate(" + d.x + "," + d.y + ")"
-
-  mousedown: ->
-    return
-    # prevent I-bar on drag
-    #d3.event.preventDefault();
-    # because :active only works in WebKit?
-    @svg.classed "active", true
-    return  if d3.event.ctrlKey or @mousedown_node or @mousedown_link
-    @restart()
-
-  mouseup: ->
-    return
-    # hide drag line
-    @drag_line.classed("hidden", true).style "marker-end", ""  if @mousedown_node
-    # because :active only works in WebKit?
-    @svg.classed "active", false
-    # clear mouse event vars
-    @resetMouseVars()
-
-  keydown: ->
-    d3.event.preventDefault()
-    return  if @lastKeyDown isnt -1
-    @lastKeyDown = d3.event.keyCode
 
   # update graph (called when needed)
   restart: ->
@@ -260,11 +233,13 @@ class BranchGraph
       .on("mouseover", (d) ->
         d3.selectAll("circle").filter((d2) -> d != d2).transition().style "opacity", "0.25"
         d3.selectAll("text").filter((d2) -> d != d2).transition().style "opacity", "0.10"
-        d3.selectAll("path.link").filter((d2) -> d != d2).transition().style "opacity", "0.10")
+        d3.selectAll("path.link").filter((d2) -> d != d2).transition().style "opacity", "0.10"
+        vis.getAuthorStats(d.branch.name))
       .on("mouseout", (d) ->
         d3.selectAll("circle").transition().style "opacity", "1"
         d3.selectAll("text").transition().style "opacity", "1"
-        d3.selectAll("path").transition().style "opacity", "1")
+        d3.selectAll("path").transition().style "opacity", "1"
+        vis.clearAuthorStats())
       .on("mousedown", (d) ->
         vis.mousedown_node = d
         d3.selectAll("circle").filter((d2) -> 
@@ -439,6 +414,14 @@ class BranchGraph
       @linked_nodes[other_id + ", " + node_id] == 1 ||
         node_id == other_id
 
+  getAuthorStats: (branch_name) ->
+    $.get "/visualisations/author_stats", {ref: branch_name}, (data) ->
+      $("#authors-list").html(data)
+
+  clearAuthorStats: ->
+    $("#authors-list").empty()
+
+        
 
 Visualisation.BranchGraph = BranchGraph
 Visualisation.branchGraph = new BranchGraph()

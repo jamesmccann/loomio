@@ -140,9 +140,6 @@ class Visualisation
   end
 
   def merge_base_file_stats(branch_name)
-    #commits_list = `git cherry master #{branch_name}`.split("\n").each { |b| b.gsub!(/[+]?/, '') }
-    # merge_base_commit = `git merge-base master #{branch_name}`.gsub("/\n/", '').strip!
-    # `git diff --numstat #{merge_base_commit}`
     `git log master..#{branch_name} --numstat --no-merges --format="%n"`
   end
 
@@ -165,8 +162,10 @@ class Visualisation
     files.merge!(:total => { :add => additions, :del => deletions })
   end
 
-  def branch_author_file_stats(branch)
-    `git log master..#{branch} --numstat --format="%an %ae"`.strip!
+  def branch_author_stats(branch)
+    `git log master..#{branch} --pretty=format:%an,%ae \
+      | awk '{ ++c[$0]; } END { for(cc in c) printf "%5d,%s\\n",c[cc],cc; }'\
+      | sort -r`.split(/\n/).each { |c| c.strip! }
   end
 
 end

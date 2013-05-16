@@ -1,0 +1,11 @@
+#author-list
+  %h4 Top Authors
+  - @authors.each do |author|
+    - author = author.split(',')
+    .author-row.clearfix
+      .author-gravatar
+        =gravatar_image(author[2])
+      .author_details
+        %p.author-name= author[1]
+        %p.author-email= author[2]
+      %p.author-commits= "#{author[0]} commits"

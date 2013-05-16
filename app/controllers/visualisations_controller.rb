@@ -115,15 +115,17 @@ class VisualisationsController < ApplicationController
     end     
   end
 
-  def author_file_stats
+  def author_stats
     @visualisation = Visualisation.new
     ref = params[:ref]
 
-    author_stats = @visualisation.branch_author_file_stats(ref)
-    puts author_stats
+    @authors = @visualisation.branch_author_stats(ref)
+    @authors = @authors.slice(0, 3) #show a max of 3 authors
 
-    respond_to do |format|
-      format.json { render :json => author_stats.to_json }
-    end     
+    if @authors.empty?
+      render :nothing => true
+    else
+      render :partial => 'authors_list' 
+    end
   end
 end
